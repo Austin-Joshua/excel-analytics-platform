@@ -847,7 +847,7 @@
                 <div class="navbar-brand">
                     <span class="navbar-brand-icon">📊</span>
                     <span class="navbar-brand-title">AnalysX</span>
-                </div>
+        </div>
                 <div class="navbar-search">
                     <span>🔍</span>
                     <input type="text" placeholder="Search data, features...">
@@ -876,7 +876,7 @@
                                 <div class="upload-icon">📁</div>
                                 <div class="upload-text">Upload Your File</div>
                                 <div class="upload-subtext">Drag, drop or click (.xlsx, .xls, .csv)</div>
-                            </div>
+            </div>
                             <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(event)">
                             
                             <!-- File Name Display -->
@@ -1070,11 +1070,27 @@
         });
 
         // Toast Notification System
+        let currentProcessingToast = null;
+
+        function clearProcessingToasts() {
+            const container = document.getElementById('toastContainer');
+            if (container) {
+                const toasts = container.querySelectorAll('.toast.info');
+                toasts.forEach(toast => toast.remove());
+            }
+            currentProcessingToast = null;
+        }
+
         function showToast(title, message, type = 'info', duration = 3000) {
             const container = document.getElementById('toastContainer');
             if (!container) {
                 console.error('Toast container not found');
                 return;
+            }
+
+            // Clear previous processing toasts if showing a new one
+            if (type === 'info' && title.toLowerCase().includes('processing')) {
+                clearProcessingToasts();
             }
 
             const toast = document.createElement('div');
@@ -1246,7 +1262,8 @@
             event.target.value = '';
 
             console.log(`File selected (not uploaded): ${file.name}`);
-            showToast('File Selected', `Ready to analyze: ${file.name}`, 'info', 3000);
+            // Automatically trigger upload
+            processAndUploadFile();
         }
 
         // Process and upload file - called only when "Upload & Analyze" button is clicked
@@ -1271,7 +1288,7 @@
                         processAndUploadFile(retryCount + 1);
                     }, 300);
                     return;
-                } else {
+            } else {
                     showToast('Error', 'Excel library failed to load. Please refresh the page.', 'error');
                     console.error('XLSX library still not available after 15 retries');
                     return;
@@ -1697,7 +1714,7 @@
                 showToast('AI Analysis', `Performing ${analysisType} analysis...`, 'info', 5000);
 
                 const response = await fetch('http://localhost:5000/api/ai/specific', {
-                    method: 'POST',
+                method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -1847,8 +1864,8 @@
                             </div>
                             <div class="query-result-item" style="margin-top: 15px; font-size: 12px; color: var(--text-gray);">
                                 <div>Records Analyzed: ${result.recordsAnalyzed}</div>
-                            </div>
-                        `;
+                    </div>
+                `;
                     }
                 } else {
                     // Fallback to local analysis if AI fails
@@ -2030,8 +2047,8 @@
                     <div class="query-result-item">
                         <div class="query-result-label">${key}</div>
                         <div class="query-result-value">${value}</div>
-                    </div>
-                `;
+                </div>
+            `;
             });
 
             contentDiv.innerHTML = html;
@@ -2094,7 +2111,7 @@
                 showSettingsNotification('❌ Please enter your full name');
                 return;
             }
-            
+
             if (!email || !email.includes('@')) {
                 showSettingsNotification('❌ Please enter a valid email');
                 return;

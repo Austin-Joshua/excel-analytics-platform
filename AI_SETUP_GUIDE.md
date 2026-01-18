@@ -2,23 +2,37 @@
 
 This guide helps you set up AI analysis for the Excel Analytics Platform.
 
-## Free AI API: Groq
+## AI Provider Options
 
-We use **Groq API** which offers free high-speed AI inference.
+### Option 1: OpenAI ChatGPT (Recommended)
+- Most powerful and accurate
+- Requires API key from OpenAI
+- Paid service but highly reliable
+- Better for production
 
-### Step 1: Get Groq API Key
+### Option 2: Groq (Free Alternative)
+- Free with unlimited queries (rate limited)
+- Fast inference speed
+- No credit card required
+- Good for development
 
-1. Go to https://console.groq.com
-2. Sign up for a free account
-3. Create an API key
-4. Copy the key
+---
+
+## Setup with OpenAI ChatGPT
+
+### Step 1: Get OpenAI API Key
+
+1. Go to https://platform.openai.com/api-keys
+2. Sign in with your OpenAI account (create if needed)
+3. Click "Create new secret key"
+4. Copy the key (keep it safe!)
 
 ### Step 2: Configure Backend
 
 1. Create a `.env` file in the `backend` folder:
 
 ```
-GROQ_API_KEY=gsk_your_api_key_here
+OPENAI_API_KEY=sk_your_chatgpt_api_key_here
 PORT=5000
 NODE_ENV=development
 ```
@@ -37,6 +51,35 @@ npm start
 ```
 
 The server will run on `http://localhost:5000`
+
+---
+
+## Setup with Groq (Free)
+
+### Step 1: Get Groq API Key
+
+1. Go to https://console.groq.com
+2. Sign up for a free account
+3. Create an API key
+4. Copy the key
+
+### Step 2: Configure Backend
+
+1. Create a `.env` file in the `backend` folder:
+
+```
+GROQ_API_KEY=gsk_your_api_key_here
+PORT=5000
+NODE_ENV=development
+```
+
+2. Install dependencies and start:
+
+```bash
+cd backend
+npm install
+npm start
+```
 
 ### Step 3: Start Frontend
 

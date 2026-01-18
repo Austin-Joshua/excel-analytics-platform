@@ -1,11 +1,22 @@
 import React from 'react';
 import FileUpload from './components/FileUpload';
+import './App.css';
 
 function App() {
   return (
-    <div>
-      <h1>Excel Analytics Platform</h1>
-      <FileUpload />
+    <div className="app">
+      <header className="app-header">
+        <div className="header-content">
+          <h1>📊 Excel Analytics Platform</h1>
+          <p>Advanced AI-Powered Data Analysis with Groq</p>
+        </div>
+      </header>
+      <main className="app-main">
+        <FileUpload />
+      </main>
+      <footer className="app-footer">
+        <p>Powered by Groq AI • v1.5 • © 2024 Excel Analytics</p>
+      </footer>
     </div>
   );
 }

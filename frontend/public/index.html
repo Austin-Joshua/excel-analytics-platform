@@ -1176,7 +1176,8 @@
             }
 
             // Show loading state with file name
-            showToast('Processing...', `Analyzing: ${file.name}`, 'info', 5000);
+            const processingToastId = Math.random();
+            showToast('Processing...', `Analyzing: ${file.name}`, 'info', 10000);
 
             try {
                 const reader = new FileReader();
@@ -1246,25 +1247,11 @@
             }
 
             try {
+                const startTime = performance.now();
                 const rows = currentData.length;
                 const cols = Object.keys(currentData[0]).length;
-                let duplicates = 0;
-                let missing = 0;
 
-                const seenRows = new Set();
-                currentData.forEach(row => {
-                    const rowStr = JSON.stringify(row);
-                    if (seenRows.has(rowStr)) duplicates++;
-                    seenRows.add(rowStr);
-                    
-                    Object.values(row).forEach(val => {
-                        if (val === null || val === undefined || val === '') missing++;
-                    });
-                });
-
-                const totalCells = rows * cols;
-                const quality = Math.max(0, 100 - ((duplicates + missing) / totalCells) * 100);
-
+                // Update immediately with basic data
                 const filesCountEl = document.getElementById('filesCount');
                 const rowsCountEl = document.getElementById('rowsCount');
                 const colsCountEl = document.getElementById('colsCount');
@@ -1273,9 +1260,32 @@
                 if (filesCountEl) filesCountEl.textContent = '1';
                 if (rowsCountEl) rowsCountEl.textContent = rows.toLocaleString();
                 if (colsCountEl) colsCountEl.textContent = cols;
-                if (qualityScoreEl) qualityScoreEl.textContent = Math.round(quality) + '%';
+                if (qualityScoreEl) qualityScoreEl.textContent = '...'; // Placeholder
 
-                console.log('Dashboard updated:', { rows, cols, quality });
+                // Calculate quality score in background
+                setTimeout(() => {
+                    let duplicates = 0;
+                    let missing = 0;
+
+                    const seenRows = new Set();
+                    currentData.forEach(row => {
+                        const rowStr = JSON.stringify(row);
+                        if (seenRows.has(rowStr)) duplicates++;
+                        seenRows.add(rowStr);
+                        
+                        Object.values(row).forEach(val => {
+                            if (val === null || val === undefined || val === '') missing++;
+                        });
+                    });
+
+                    const totalCells = rows * cols;
+                    const quality = Math.max(0, 100 - ((duplicates + missing) / totalCells) * 100);
+
+                    if (qualityScoreEl) qualityScoreEl.textContent = Math.round(quality) + '%';
+
+                    const endTime = performance.now();
+                    console.log(`Dashboard updated in ${(endTime - startTime).toFixed(2)}ms - Quality: ${Math.round(quality)}%`);
+                }, 0);
             } catch (error) {
                 console.error('Error updating dashboard:', error);
             }
@@ -1289,40 +1299,68 @@
             }
 
             try {
+                const startTime = performance.now();
                 const columns = Object.keys(currentData[0]);
-                const analysis = {
-                    columns: [],
-                    totalRows: currentData.length,
-                    totalColumns: columns.length
-                };
+                
+                // Show initial quick analysis immediately
+                showQuickAnalysis(currentData.length, columns.length);
 
-                columns.forEach(col => {
-                    const values = currentData.map(row => row[col]).filter(v => v !== null && v !== undefined && v !== '');
-                    const numValues = values.filter(v => !isNaN(v) && v !== '');
-                    
-                    let predictedType = 'Text';
-                    if (numValues.length > values.length * 0.7) {
-                        predictedType = numValues.some(v => v.toString().includes('.')) ? 'Decimal' : 'Integer';
-                    } else if (col.toLowerCase().includes('date') || col.toLowerCase().includes('time')) {
-                        predictedType = 'Date';
-                    } else if (col.toLowerCase().includes('id') || col.toLowerCase().includes('code')) {
-                        predictedType = 'ID';
-                    }
+                // Perform detailed analysis in background
+                setTimeout(() => {
+                    const analysis = {
+                        columns: [],
+                        totalRows: currentData.length,
+                        totalColumns: columns.length
+                    };
 
-                    analysis.columns.push({
-                        name: col,
-                        predictedType: predictedType,
-                        nullCount: currentData.length - values.length,
-                        uniqueCount: new Set(values.map(v => v.toString())).size
+                    columns.forEach(col => {
+                        const values = currentData.map(row => row[col]).filter(v => v !== null && v !== undefined && v !== '');
+                        const numValues = values.filter(v => !isNaN(v) && v !== '');
+                        
+                        let predictedType = 'Text';
+                        if (numValues.length > values.length * 0.7) {
+                            predictedType = numValues.some(v => v.toString().includes('.')) ? 'Decimal' : 'Integer';
+                        } else if (col.toLowerCase().includes('date') || col.toLowerCase().includes('time')) {
+                            predictedType = 'Date';
+                        } else if (col.toLowerCase().includes('id') || col.toLowerCase().includes('code')) {
+                            predictedType = 'ID';
+                        }
+
+                        analysis.columns.push({
+                            name: col,
+                            predictedType: predictedType,
+                            nullCount: currentData.length - values.length,
+                            uniqueCount: new Set(values.map(v => v.toString())).size
+                        });
                     });
-                });
 
-                currentSheetAnalysis = analysis;
-                displayAIAnalysis(analysis);
-                console.log('AI Analysis completed:', analysis);
+                    currentSheetAnalysis = analysis;
+                    displayAIAnalysis(analysis);
+                    
+                    const endTime = performance.now();
+                    console.log(`AI Analysis completed in ${(endTime - startTime).toFixed(2)}ms`);
+                }, 0);  // Use requestAnimationFrame timing instead of timeout for better performance
             } catch (error) {
                 console.error('Error in performAIAnalysis:', error);
             }
+        }
+
+        function showQuickAnalysis(totalRows, totalCols) {
+            const html = `
+                <div class="prediction-item">
+                    <div class="prediction-label">Total Rows</div>
+                    <div class="prediction-value">${totalRows.toLocaleString()}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Total Columns</div>
+                    <div class="prediction-value">${totalCols}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Status</div>
+                    <div class="prediction-value" style="font-size: 12px; color: var(--text-gray);">Analyzing...</div>
+                </div>
+            `;
+            document.getElementById('aiPredictions').innerHTML = html;
         }
 
         function displayAIAnalysis(analysis) {
@@ -2206,6 +2244,52 @@
             .toast {
                 margin: 0;
             }
+        }
+
+        /* Quick Analysis Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .prediction-item {
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .prediction-value {
+            animation: slideInRight 0.4s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading pulse animation */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .prediction-value.loading {
+            animation: pulse 1s ease-in-out infinite;
+            color: var(--text-gray);
         }
     </style>
 

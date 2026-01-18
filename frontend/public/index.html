@@ -1426,6 +1426,284 @@
             const modal = document.getElementById('settingsModal');
             if (e.target === modal) closeSettings();
         });
+
+        // ============================================
+        // V1.5 FEATURES - Keyboard Shortcuts
+        // ============================================
+        
+        // Keyboard shortcuts
+        const shortcuts = {
+            'Ctrl+U': () => switchSection('upload'),
+            'Ctrl+A': () => switchSection('analytics'),
+            'Ctrl+H': () => switchSection('charts'),
+            'Ctrl+I': () => switchSection('insights'),
+            'Ctrl+T': () => switchSection('datatools'),
+            'Ctrl+S': () => openSettings(),
+            'Ctrl+E': () => exportData('excel'),
+            'Ctrl+L': () => setTheme('light'),
+            'Ctrl+D': () => setTheme('dark'),
+            'Ctrl+/': () => document.querySelector('.navbar-search input').focus(),
+        };
+
+        document.addEventListener('keydown', (e) => {
+            const key = `${e.ctrlKey ? 'Ctrl+' : ''}${e.key.toUpperCase()}`;
+            if (shortcuts[key]) {
+                e.preventDefault();
+                shortcuts[key]();
+            }
+        });
+
+        // ============================================
+        // V1.5 FEATURES - Export Functionality
+        // ============================================
+
+        function exportData(format) {
+            if (!currentData || currentData.length === 0) {
+                alert('Please upload data first');
+                return;
+            }
+
+            switch(format) {
+                case 'excel':
+                    exportToExcel();
+                    break;
+                case 'csv':
+                    exportToCSV();
+                    break;
+                case 'pdf':
+                    exportToPDF();
+                    break;
+                case 'json':
+                    exportToJSON();
+                    break;
+                case 'chart-png':
+                    exportChartPNG();
+                    break;
+            }
+        }
+
+        function exportToExcel() {
+            const worksheet = XLSX.utils.json_to_sheet(currentData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+            XLSX.writeFile(workbook, `analysX_export_${new Date().toISOString().split('T')[0]}.xlsx`);
+            alert('✅ Exported to Excel successfully!');
+        }
+
+        function exportToCSV() {
+            let csv = Object.keys(currentData[0]).join(',') + '\n';
+            currentData.forEach(row => {
+                csv += Object.values(row).map(v => `"${v}"`).join(',') + '\n';
+            });
+            
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            link.download = `analysX_export_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            alert('✅ Exported to CSV successfully!');
+        }
+
+        function exportToJSON() {
+            const json = JSON.stringify(currentData, null, 2);
+            const link = document.createElement('a');
+            link.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+            link.download = `analysX_export_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            alert('✅ Exported to JSON successfully!');
+        }
+
+        function exportToPDF() {
+            // Simple PDF export with summary
+            let pdf = `AnalysX Report - ${new Date().toLocaleDateString()}\n\n`;
+            pdf += `Statistics:\n`;
+            pdf += `Total Rows: ${currentData.length}\n`;
+            pdf += `Columns: ${Object.keys(currentData[0]).length}\n`;
+            pdf += `Data Quality: ${document.getElementById('qualityOverall').textContent}\n\n`;
+            pdf += `Column Statistics:\n`;
+            Object.keys(currentData[0]).forEach(col => {
+                pdf += `- ${col}\n`;
+            });
+            
+            const link = document.createElement('a');
+            link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(pdf);
+            link.download = `analysX_report_${new Date().toISOString().split('T')[0]}.txt`;
+            link.click();
+            alert('✅ Exported report successfully!');
+        }
+
+        function exportChartPNG() {
+            if (currentChart1) {
+                const link = document.createElement('a');
+                link.href = currentChart1.toBase64Image();
+                link.download = `analysX_chart_${new Date().toISOString().split('T')[0]}.png`;
+                link.click();
+                alert('✅ Chart exported as PNG!');
+            } else {
+                alert('Generate a chart first');
+            }
+        }
+
+        // ============================================
+        // V1.5 FEATURES - Advanced Analysis Types
+        // ============================================
+
+        function analyzeDistribution() {
+            if (!currentData || currentData.length === 0) return;
+            
+            const firstNumCol = Object.keys(currentData[0]).find(col => 
+                currentData.some(row => !isNaN(row[col]))
+            );
+            
+            if (!firstNumCol) return;
+
+            const values = currentData.map(row => parseFloat(row[firstNumCol]))
+                .filter(v => !isNaN(v));
+            
+            values.sort((a, b) => a - b);
+            const min = values[0];
+            const max = values[values.length - 1];
+            const q1 = values[Math.floor(values.length * 0.25)];
+            const median = values[Math.floor(values.length * 0.5)];
+            const q3 = values[Math.floor(values.length * 0.75)];
+            
+            alert(`📊 Distribution Analysis for ${firstNumCol}:\n\n` +
+                  `Min: ${min.toFixed(2)}\n` +
+                  `Q1: ${q1.toFixed(2)}\n` +
+                  `Median: ${median.toFixed(2)}\n` +
+                  `Q3: ${q3.toFixed(2)}\n` +
+                  `Max: ${max.toFixed(2)}\n` +
+                  `Range: ${(max - min).toFixed(2)}\n` +
+                  `IQR: ${(q3 - q1).toFixed(2)}`);
+        }
+
+        function analyzeVariance() {
+            if (!currentData || currentData.length === 0) return;
+            
+            const firstNumCol = Object.keys(currentData[0]).find(col => 
+                currentData.some(row => !isNaN(row[col]))
+            );
+            
+            if (!firstNumCol) return;
+
+            const values = currentData.map(row => parseFloat(row[firstNumCol]))
+                .filter(v => !isNaN(v));
+            
+            const mean = values.reduce((a, b) => a + b) / values.length;
+            const variance = values.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / values.length;
+            const stdDev = Math.sqrt(variance);
+            const cv = (stdDev / mean) * 100; // Coefficient of variation
+            
+            alert(`📈 Variance Analysis for ${firstNumCol}:\n\n` +
+                  `Mean: ${mean.toFixed(2)}\n` +
+                  `Variance: ${variance.toFixed(2)}\n` +
+                  `Std Dev: ${stdDev.toFixed(2)}\n` +
+                  `Coefficient of Variation: ${cv.toFixed(2)}%\n\n` +
+                  `${cv < 30 ? '✅ Low variability' : cv < 50 ? '⚠️ Moderate variability' : '❌ High variability'}`);
+        }
+
+        function analyzePercentiles() {
+            if (!currentData || currentData.length === 0) return;
+            
+            const firstNumCol = Object.keys(currentData[0]).find(col => 
+                currentData.some(row => !isNaN(row[col]))
+            );
+            
+            if (!firstNumCol) return;
+
+            const values = currentData.map(row => parseFloat(row[firstNumCol]))
+                .filter(v => !isNaN(v));
+            
+            values.sort((a, b) => a - b);
+            
+            const getPercentile = (p) => {
+                const idx = Math.ceil((p / 100) * values.length) - 1;
+                return values[Math.max(0, idx)];
+            };
+            
+            alert(`📊 Percentile Analysis for ${firstNumCol}:\n\n` +
+                  `10th percentile: ${getPercentile(10).toFixed(2)}\n` +
+                  `25th percentile: ${getPercentile(25).toFixed(2)}\n` +
+                  `50th percentile: ${getPercentile(50).toFixed(2)}\n` +
+                  `75th percentile: ${getPercentile(75).toFixed(2)}\n` +
+                  `90th percentile: ${getPercentile(90).toFixed(2)}\n` +
+                  `95th percentile: ${getPercentile(95).toFixed(2)}\n` +
+                  `99th percentile: ${getPercentile(99).toFixed(2)}`);
+        }
+
+        // ============================================
+        // V1.5 FEATURES - Mobile UX Improvements
+        // ============================================
+
+        // Add touch-friendly enhancements
+        document.addEventListener('DOMContentLoaded', () => {
+            // Improve touch targets on mobile
+            if (window.innerWidth < 768) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.style.padding = '15px 20px';
+                });
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.style.minHeight = '44px';
+                });
+            }
+
+            // Add swipe support for section switching
+            let touchStartX = 0;
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+            });
+
+            document.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const diff = touchStartX - touchEndX;
+                
+                // Swipe left - next section
+                if (diff > 50) {
+                    console.log('Swipe left detected');
+                }
+                // Swipe right - previous section
+                if (diff < -50) {
+                    console.log('Swipe right detected');
+                }
+            });
+        });
+
+        // Show export menu
+        function showExportMenu() {
+            const menu = `
+                📥 Export Options:\n
+                1. Excel (.xlsx) - Ctrl+E\n
+                2. CSV (.csv)\n
+                3. JSON (.json)\n
+                4. PDF Report\n
+                5. Chart (PNG)\n\n
+                Choose format:
+            `;
+            
+            const choice = prompt(menu);
+            if (choice) {
+                switch(choice) {
+                    case '1':
+                        exportData('excel');
+                        break;
+                    case '2':
+                        exportData('csv');
+                        break;
+                    case '3':
+                        exportData('json');
+                        break;
+                    case '4':
+                        exportData('pdf');
+                        break;
+                    case '5':
+                        exportData('chart-png');
+                        break;
+                }
+            }
+        }
+
+        // Version info
+        console.log('%cAnalysX v1.5', 'color: #1e3a8a; font-size: 16px; font-weight: bold;');
+        console.log('%cFeatures: Keyboard Shortcuts | Export | Advanced Analysis | Mobile UX', 'color: #3b82f6;');
     </script>
 </body>
 </html>

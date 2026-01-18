@@ -169,38 +169,6 @@
             margin: 0;
         }
 
-        .navbar-hamburger-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0;
-        }
-
-        .navbar-hamburger {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--primary);
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            height: 44px;
-            width: 44px;
-        }
-
-        .navbar-hamburger:hover {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
-            transform: scale(1.08);
-        }
-
-        .navbar-hamburger:active {
-            transform: scale(0.95);
-        }
-
         .nav-item {
             padding: 12px 15px;
             display: flex;
@@ -765,9 +733,6 @@
             <div class="navbar-right">
                 <button class="nav-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
                 <button class="nav-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
-                <div class="navbar-hamburger-wrapper">
-                    <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
-                </div>
         </div>
     </div>
 

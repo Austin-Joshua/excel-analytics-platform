@@ -144,6 +144,25 @@
             margin: 0;
         }
 
+        .navbar-logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-logo-wrapper:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+        }
+
+        .navbar-logo-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
         .navbar-hamburger-wrapper {
             display: flex;
             align-items: center;
@@ -735,8 +754,8 @@
         <!-- Top Navbar -->
     <div class="navbar">
         <div class="navbar-left">
-                <div class="navbar-hamburger-wrapper">
-                    <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+                <div class="navbar-logo-wrapper">
+                    <span class="navbar-logo-icon">📊</span>
                 </div>
                 <div class="navbar-search">
                     <span>🔍</span>
@@ -746,6 +765,9 @@
             <div class="navbar-right">
                 <button class="nav-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
                 <button class="nav-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
+                <div class="navbar-hamburger-wrapper">
+                    <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+                </div>
         </div>
     </div>
 

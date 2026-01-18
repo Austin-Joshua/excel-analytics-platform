@@ -298,7 +298,35 @@
         .navbar-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+        }
+
+        .navbar-brand-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand-right:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
+            border-color: var(--primary);
+        }
+
+        .navbar-brand-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .navbar-brand-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
         }
 
         .nav-btn {
@@ -749,7 +777,7 @@
         <div class="navbar-left">
                 <div class="navbar-hamburger-wrapper">
                     <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
-                    <span class="navbar-hamburger-title">Navigation</span>
+                    <span class="navbar-hamburger-title">AnalysX</span>
                 </div>
                 <div class="navbar-search">
                     <span>🔍</span>
@@ -757,6 +785,10 @@
         </div>
             </div>
             <div class="navbar-right">
+                <div class="navbar-brand-right">
+                    <span class="navbar-brand-icon">📊</span>
+                    <span class="navbar-brand-text">AnalysX</span>
+                </div>
                 <button class="nav-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
                 <button class="nav-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
         </div>

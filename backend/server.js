@@ -20,5 +20,15 @@ if (mongoUri) {
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/file', require('./routes/fileRoutes'));
+app.use('/api/ai', require('./routes/aiRoutes'));
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date(),
+    features: ['auth', 'file-upload', 'ai-analysis']
+  });
+});
 
 app.listen(5000, () => console.log('Server running on port 5000'));

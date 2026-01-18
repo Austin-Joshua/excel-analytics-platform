@@ -1659,21 +1659,71 @@
             showToast('Sort', 'Select a column to sort by clicking on it', 'info', 3000);
         }
 
-        // Features Functions
-        function correlationAnalysis() {
-            showToast('Analysis', 'Computing correlation matrix...', 'info', 3000);
+        // Features Functions - Using AI
+        async function correlationAnalysis() {
+            if (!currentData) {
+                showToast('No Data', 'Please upload a file first', 'warning');
+                return;
+            }
+            performAIAnalysis('correlation');
         }
 
-        function regressionAnalysis() {
-            showToast('Analysis', 'Performing regression analysis...', 'info', 3000);
+        async function regressionAnalysis() {
+            if (!currentData) {
+                showToast('No Data', 'Please upload a file first', 'warning');
+                return;
+            }
+            performAIAnalysis('regression');
         }
 
-        function anomalyDetection() {
-            showToast('Analysis', 'Detecting anomalies in data...', 'info', 3000);
+        async function anomalyDetection() {
+            if (!currentData) {
+                showToast('No Data', 'Please upload a file first', 'warning');
+                return;
+            }
+            performAIAnalysis('anomaly');
         }
 
-        function clusteringAnalysis() {
-            showToast('Analysis', 'Clustering similar records...', 'info', 3000);
+        async function clusteringAnalysis() {
+            if (!currentData) {
+                showToast('No Data', 'Please upload a file first', 'warning');
+                return;
+            }
+            performAIAnalysis('clustering');
+        }
+
+        async function performAIAnalysis(analysisType) {
+            try {
+                showToast('AI Analysis', `Performing ${analysisType} analysis...`, 'info', 5000);
+
+                const response = await fetch('http://localhost:5000/api/ai/specific', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: currentData,
+                        type: analysisType
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast('Analysis Complete', `${analysisType} analysis completed`, 'success');
+                    console.log(result.analysis);
+                    
+                    // Show result in an alert or modal
+                    const resultText = result.analysis.substring(0, 500) + '...';
+                    showToast('Result', resultText, 'success', 5000);
+                } else {
+                    showToast('Error', result.error || 'Analysis failed', 'error');
+                }
+
+            } catch (error) {
+                console.error('AI Analysis Error:', error);
+                showToast('Error', 'Could not perform analysis. Check if backend is running.', 'error');
+            }
         }
 
         // Export Functions
@@ -1753,6 +1803,69 @@
         }
 
         function analyzeQuery(query) {
+            if (!currentData || currentData.length === 0) {
+                return { 'Error': 'No data loaded' };
+            }
+
+            // Try AI analysis first
+            analyzeQueryWithAI(query);
+        }
+
+        async function analyzeQueryWithAI(query) {
+            try {
+                // Show loading state
+                const resultsDiv = document.getElementById('queryResults');
+                const contentDiv = document.getElementById('queryContent');
+                if (contentDiv) {
+                    contentDiv.innerHTML = '<div style="text-align: center; padding: 20px;">🔍 Analyzing with AI...</div>';
+                }
+                if (resultsDiv) {
+                    resultsDiv.classList.add('show');
+                }
+
+                // Send to backend for AI analysis
+                const response = await fetch('http://localhost:5000/api/ai/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: currentData,
+                        query: query
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Display AI analysis
+                    if (contentDiv) {
+                        contentDiv.innerHTML = `
+                            <div class="query-result-item">
+                                <div class="query-result-label">AI Analysis</div>
+                                <div class="query-result-value">${result.analysis}</div>
+                            </div>
+                            <div class="query-result-item" style="margin-top: 15px; font-size: 12px; color: var(--text-gray);">
+                                <div>Records Analyzed: ${result.recordsAnalyzed}</div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    // Fallback to local analysis if AI fails
+                    const localResults = analyzeQueryLocally(query);
+                    displayQueryResults(localResults);
+                }
+
+            } catch (error) {
+                console.error('AI Query Error:', error);
+                // Fallback to local analysis
+                const localResults = analyzeQueryLocally(query);
+                displayQueryResults(localResults);
+                showToast('Using Local Analysis', 'AI unavailable, using local analysis', 'info', 2000);
+            }
+        }
+
+        function analyzeQueryLocally(query) {
             if (!currentData || currentData.length === 0) {
                 return { 'Error': 'No data loaded' };
             }

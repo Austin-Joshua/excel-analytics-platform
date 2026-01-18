@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnalysX - AI Data Analytics Platform</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="theme-color" content="#1e3a8a">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f7fb;
+            --bg-tertiary: #e8eff7;
+            --text-primary: #1a2332;
+            --text-secondary: #5a6b7f;
+            --text-tertiary: #8a9aaf;
+            --accent-primary: #1e3a8a;
+            --accent-secondary: #3b82f6;
+            --accent-light: #eff6ff;
+            --border-color: #d1d5db;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-md: rgba(0, 0, 0, 0.12);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --accent-primary: #60a5fa;
+            --accent-secondary: #93c5fd;
+            --accent-light: #1e3a8a;
+            --border-color: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-md: rgba(0, 0, 0, 0.5);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --info: #60a5fa;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            gap: 0;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-primary);
+            border-right: 2px solid var(--border-color);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: 2px 0 8px var(--shadow);
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand img {
+            width: 36px;
+            height: 36px;
+            display: block;
+        }
+
+        .sidebar-brand h1 {
+            color: var(--accent-primary);
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .nav-section {
+            padding: 15px 10px;
+        }
+
+        .nav-section-title {
+            padding: 0 15px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 10px;
+        }
+
+        .nav-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            user-select: none;
+            border-left: 4px solid transparent;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            border-left-color: var(--accent-secondary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            border-left-color: var(--accent-secondary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            width: 22px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Top Navbar */
+        .navbar {
+            background: var(--bg-primary);
+            padding: 12px 30px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px var(--shadow);
+            height: 75px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .navbar-search {
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            gap: 8px;
+            flex: 0.3;
+        }
+
+        .navbar-search input {
+            border: none;
+            background: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            flex: 1;
+        }
+
+        .navbar-search input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 35px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        /* Section Containers */
+        .section {
+            background: var(--bg-primary);
+            border-radius: 14px;
+            border: 2px solid var(--border-color);
+            padding: 30px;
+            box-shadow: 0 4px 12px var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 6px 16px var(--shadow-md);
+            border-color: var(--accent-secondary);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .section-icon {
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        /* Upload Area */
+        .upload-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-secondary);
+            background: var(--accent-light);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Stats Grid */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 6px 12px var(--shadow-md);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* AI Analysis Section */
+        .ai-analysis {
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-secondary) 100%);
+            border-radius: 14px;
+            border: 2px solid var(--accent-secondary);
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .ai-analysis-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .ai-predictions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .prediction-item {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid var(--accent-secondary);
+        }
+
+        .prediction-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .prediction-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Query System */
+        .query-section {
+            background: linear-gradient(135deg, var(--info) 0%, #2563eb 100%);
+            border-radius: 14px;
+            padding: 25px;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .query-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .query-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .query-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .query-btn {
+            padding: 12px 24px;
+            background: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .query-btn:hover {
+            background: #1e3a8a;
+            transform: translateY(-2px);
+        }
+
+        .query-results {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 20px;
+            color: var(--text-primary);
+            margin-top: 15px;
+        }
+
+        .query-result-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .query-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .query-result-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .query-result-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .upload-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .content-body {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .upload-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--bg-secondary);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <img src="icon.svg" alt="AnalysX">
+                <h1>AnalysX</h1>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <div class="nav-item active" onclick="switchSection('dashboard')">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Analysis</div>
+                <div class="nav-item" onclick="switchSection('analytics')">
+                    <span class="nav-icon">🔍</span>
+                    <span>Analytics</span>
+                </div>
+                <div class="nav-item" onclick="switchSection('charts')">
+                    <span class="nav-icon">📈</span>
+                    <span>Charts</span>
+                </div>
+                <div class="nav-item" onclick="switchSection('insights')">
+                    <span class="nav-icon">💡</span>
+                    <span>Insights</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Tools</div>
+                <div class="nav-item" onclick="switchSection('datatools')">
+                    <span class="nav-icon">🔧</span>
+                    <span>Data Tools</span>
+                </div>
+                <div class="nav-item" onclick="switchSection('features')">
+                    <span class="nav-icon">⚡</span>
+                    <span>Features</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Top Navbar -->
+            <div class="navbar">
+                <div class="navbar-left">
+                    <div class="navbar-search">
+                        <span>🔍</span>
+                        <input type="text" placeholder="Search data...">
+                    </div>
+                </div>
+                <div class="navbar-right">
+                    <button class="nav-btn" onclick="toggleTheme()" title="Toggle Theme">🌙</button>
+                    <button class="nav-btn" onclick="openSettings()" title="Settings">⚙️</button>
+                </div>
+            </div>
+
+            <!-- Content Body -->
+            <div class="content-body">
+                <!-- Dashboard Section (Merged with Upload) -->
+                <div id="dashboard" class="section">
+                    <div class="section-title">
+                        <span class="section-icon">📊</span>
+                        Dashboard & Upload
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div class="upload-container">
+                        <div>
+                            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                                <div class="upload-icon">📁</div>
+                                <div class="upload-text">Upload Excel File</div>
+                                <div class="upload-subtext">Drag, drop or click to upload (.xlsx, .xls, .csv)</div>
+                            </div>
+                            <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(event)">
+                            <button class="btn btn-primary btn-block" onclick="uploadFile()">
+                                <span>📤</span> Upload & Analyze
+                            </button>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="stats-container">
+                            <div class="stat-card">
+                                <div class="stat-value" id="filesCount">0</div>
+                                <div class="stat-label">Files Uploaded</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="rowsCount">0</div>
+                                <div class="stat-label">Total Rows</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="colsCount">0</div>
+                                <div class="stat-label">Columns</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="qualityScore">0%</div>
+                                <div class="stat-label">Data Quality</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Analysis & Predictions -->
+                    <div class="ai-analysis">
+                        <div class="ai-analysis-title">
+                            🤖 AI Sheet Analysis & Predictions
+                        </div>
+                        <div class="ai-predictions" id="aiPredictions">
+                            <div class="prediction-item">
+                                <div class="prediction-label">Sheet Status</div>
+                                <div class="prediction-value">No data uploaded yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Query System -->
+                    <div class="query-section">
+                        <div class="query-title">
+                            🧠 Ask Your Excel Sheet Anything
+                        </div>
+                        <div class="query-input-group">
+                            <input type="text" class="query-input" id="queryInput" 
+                                   placeholder="e.g., What's the average sales? Show me top products. Find outliers in price..."
+                                   onkeypress="handleQueryKeyPress(event)">
+                            <button class="query-btn" onclick="submitQuery()">Ask</button>
+                        </div>
+                        <div class="query-results" id="queryResults" style="display: none;">
+                            <div id="queryContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Section (placeholder for now) -->
+                <div id="analytics" class="section" style="display: none;">
+                    <div class="section-title">
+                        <span class="section-icon">🔍</span>
+                        Analytics
+                    </div>
+                    <p>Analytics content coming soon...</p>
+                </div>
+
+                <!-- Charts Section (placeholder) -->
+                <div id="charts" class="section" style="display: none;">
+                    <div class="section-title">
+                        <span class="section-icon">📈</span>
+                        Charts
+                    </div>
+                    <p>Charts content coming soon...</p>
+                </div>
+
+                <!-- Insights Section (placeholder) -->
+                <div id="insights" class="section" style="display: none;">
+                    <div class="section-title">
+                        <span class="section-icon">💡</span>
+                        Insights
+                    </div>
+                    <p>Insights content coming soon...</p>
+                </div>
+
+                <!-- Data Tools Section (placeholder) -->
+                <div id="datatools" class="section" style="display: none;">
+                    <div class="section-title">
+                        <span class="section-icon">🔧</span>
+                        Data Tools
+                    </div>
+                    <p>Data Tools content coming soon...</p>
+                </div>
+
+                <!-- Features Section (placeholder) -->
+                <div id="features" class="section" style="display: none;">
+                    <div class="section-title">
+                        <span class="section-icon">⚡</span>
+                        Features
+                    </div>
+                    <p>Features content coming soon...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = null;
+        let currentSheetAnalysis = null;
+
+        window.addEventListener('load', () => {
+            loadTheme();
+        });
+
+        // Section switching
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'flex';
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item')?.classList.add('active');
+        }
+
+        // File upload handling
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    currentData = XLSX.utils.sheet_to_json(sheet);
+                    performAIAnalysis();
+                    updateDashboard();
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function uploadFile() {
+            if (currentData) {
+                alert('✅ File uploaded and analyzed successfully!');
+            } else {
+                alert('Please select a file first');
+            }
+        }
+
+        // Update dashboard with statistics
+        function updateDashboard() {
+            if (!currentData || currentData.length === 0) return;
+
+            const rows = currentData.length;
+            const cols = Object.keys(currentData[0]).length;
+            let duplicates = 0;
+            let missing = 0;
+
+            const seenRows = new Set();
+            currentData.forEach(row => {
+                const rowStr = JSON.stringify(row);
+                if (seenRows.has(rowStr)) duplicates++;
+                seenRows.add(rowStr);
+                
+                Object.values(row).forEach(val => {
+                    if (val === null || val === undefined || val === '') missing++;
+                });
+            });
+
+            const quality = Math.max(0, 100 - (duplicates + missing) / (rows * cols) * 100);
+
+            document.getElementById('filesCount').textContent = '1';
+            document.getElementById('rowsCount').textContent = rows.toLocaleString();
+            document.getElementById('colsCount').textContent = cols;
+            document.getElementById('qualityScore').textContent = Math.round(quality) + '%';
+        }
+
+        // AI Analysis - Predict column names and types
+        function performAIAnalysis() {
+            if (!currentData || currentData.length === 0) return;
+
+            const columns = Object.keys(currentData[0]);
+            const analysis = {
+                columns: [],
+                totalRows: currentData.length,
+                totalColumns: columns.length,
+                dataQuality: 'Good'
+            };
+
+            columns.forEach(col => {
+                const values = currentData.map(row => row[col]).filter(v => v !== null && v !== undefined && v !== '');
+                const numValues = values.filter(v => !isNaN(v) && v !== '');
+                
+                // Predict column type
+                let predictedType = 'Text';
+                let confidence = 'Medium';
+                
+                if (numValues.length > values.length * 0.7) {
+                    predictedType = numValues.some(v => v.toString().includes('.')) ? 'Decimal' : 'Integer';
+                    confidence = 'High';
+                } else if (col.toLowerCase().includes('date') || col.toLowerCase().includes('time')) {
+                    predictedType = 'Date';
+                    confidence = 'High';
+                } else if (col.toLowerCase().includes('price') || col.toLowerCase().includes('amount')) {
+                    predictedType = 'Currency';
+                    confidence = 'High';
+                }
+
+                analysis.columns.push({
+                    name: col,
+                    predictedType: predictedType,
+                    confidence: confidence,
+                    nullCount: currentData.length - values.length,
+                    sampleValue: values[0] || 'N/A'
+                });
+            });
+
+            currentSheetAnalysis = analysis;
+            displayAIAnalysis(analysis);
+        }
+
+        // Display AI analysis predictions
+        function displayAIAnalysis(analysis) {
+            const html = `
+                <div class="prediction-item">
+                    <div class="prediction-label">Total Rows</div>
+                    <div class="prediction-value">${analysis.totalRows.toLocaleString()}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Total Columns</div>
+                    <div class="prediction-value">${analysis.totalColumns}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Data Quality</div>
+                    <div class="prediction-value">✅ ${analysis.dataQuality}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Predicted Columns</div>
+                    <div class="prediction-value">${analysis.columns.map(c => `<strong>${c.name}</strong> (${c.predictedType})`).join(', ')}</div>
+                </div>
+            `;
+            document.getElementById('aiPredictions').innerHTML = html;
+        }
+
+        // AI Query System
+        function handleQueryKeyPress(event) {
+            if (event.key === 'Enter') {
+                submitQuery();
+            }
+        }
+
+        function submitQuery() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                alert('Please enter a question');
+                return;
+            }
+
+            if (!currentData) {
+                alert('Please upload a file first');
+                return;
+            }
+
+            processQuery(query);
+        }
+
+        function processQuery(query) {
+            const results = analyzeQuery(query);
+            displayQueryResults(results);
+        }
+
+        function analyzeQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const results = {};
+
+            // Average/Sum analysis
+            if (lowerQuery.includes('average') || lowerQuery.includes('avg')) {
+                const numCols = currentSheetAnalysis.columns.filter(c => 
+                    c.predictedType.includes('Integer') || c.predictedType.includes('Decimal') || c.predictedType.includes('Currency')
+                );
+                numCols.forEach(col => {
+                    const values = currentData.map(row => parseFloat(row[col.name]))
+                        .filter(v => !isNaN(v));
+                    if (values.length > 0) {
+                        const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
+                        results[`Average of ${col.name}`] = avg;
+                    }
+                });
+            }
+
+            // Max/Min analysis
+            if (lowerQuery.includes('max') || lowerQuery.includes('maximum')) {
+                const numCols = currentSheetAnalysis.columns.filter(c => 
+                    c.predictedType.includes('Integer') || c.predictedType.includes('Decimal') || c.predictedType.includes('Currency')
+                );
+                numCols.forEach(col => {
+                    const values = currentData.map(row => parseFloat(row[col.name]))
+                        .filter(v => !isNaN(v));
+                    if (values.length > 0) {
+                        const max = Math.max(...values).toFixed(2);
+                        results[`Maximum ${col.name}`] = max;
+                    }
+                });
+            }
+
+            if (lowerQuery.includes('min') || lowerQuery.includes('minimum')) {
+                const numCols = currentSheetAnalysis.columns.filter(c => 
+                    c.predictedType.includes('Integer') || c.predictedType.includes('Decimal') || c.predictedType.includes('Currency')
+                );
+                numCols.forEach(col => {
+                    const values = currentData.map(row => parseFloat(row[col.name]))
+                        .filter(v => !isNaN(v));
+                    if (values.length > 0) {
+                        const min = Math.min(...values).toFixed(2);
+                        results[`Minimum ${col.name}`] = min;
+                    }
+                });
+            }
+
+            // Count rows
+            if (lowerQuery.includes('total') || lowerQuery.includes('count') || lowerQuery.includes('how many')) {
+                results['Total Records'] = currentData.length.toLocaleString();
+            }
+
+            // Column info
+            if (lowerQuery.includes('column') || lowerQuery.includes('field')) {
+                results['Columns Found'] = currentSheetAnalysis.columns.map(c => `${c.name} (${c.predictedType})`).join(', ');
+            }
+
+            if (Object.keys(results).length === 0) {
+                results['Analysis Result'] = 'Query processed. Your dataset has ' + currentData.length + ' records with ' + currentSheetAnalysis.columns.length + ' columns.';
+            }
+
+            return results;
+        }
+
+        function displayQueryResults(results) {
+            const resultsDiv = document.getElementById('queryResults');
+            const contentDiv = document.getElementById('queryContent');
+
+            let html = '';
+            Object.entries(results).forEach(([key, value]) => {
+                html += `
+                    <div class="query-result-item">
+                        <div class="query-result-label">${key}</div>
+                        <div class="query-result-value">${value}</div>
+                    </div>
+                `;
+            });
+
+            contentDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function loadTheme() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Settings
+        function openSettings() {
+            alert('⚙️ Settings panel coming soon...');
+        }
+    </script>
+</body>
+</html>

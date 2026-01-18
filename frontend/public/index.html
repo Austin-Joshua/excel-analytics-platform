@@ -109,21 +109,23 @@
         .sidebar-hamburger {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 26px;
             cursor: pointer;
-            color: var(--text-gray);
-            padding: 8px 12px;
+            color: var(--primary);
+            padding: 8px 10px;
             border-radius: 8px;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            height: 40px;
+            width: 40px;
         }
 
         .sidebar-hamburger:hover {
-            background: var(--bg-gray);
-            color: var(--primary);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            transform: scale(1.05);
         }
 
         .sidebar-hamburger:active {
@@ -240,33 +242,8 @@
         .navbar-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             flex: 1;
-        }
-
-        .hamburger-navbar {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--text-dark);
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 44px;
-            width: 44px;
-        }
-
-        .hamburger-navbar:hover {
-            background: var(--bg-gray);
-            color: var(--primary);
-        }
-
-        .hamburger-navbar:active {
-            transform: scale(0.95);
         }
 
         .navbar-search {
@@ -754,7 +731,6 @@
         <!-- Top Navbar -->
     <div class="navbar">
         <div class="navbar-left">
-                <button class="hamburger-navbar" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
                 <div class="navbar-search">
                     <span>🔍</span>
                     <input type="text" placeholder="Search data, features...">

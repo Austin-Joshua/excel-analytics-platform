@@ -708,7 +708,7 @@
                     <span class="nav-icon">📥</span>
                     <span class="nav-text">Export</span>
                 </div>
-                <div class="nav-item" onclick="switchSection('settings', this)">
+                <div class="nav-item" onclick="openSettingsModal()">
                     <span class="nav-icon">⚙️</span>
                     <span class="nav-text">Settings</span>
                 </div>
@@ -719,18 +719,18 @@
     <!-- Main Container -->
     <div class="main-container">
         <!-- Top Navbar -->
-        <div class="navbar">
-            <div class="navbar-left">
+    <div class="navbar">
+        <div class="navbar-left">
                 <div class="navbar-search">
                     <span>🔍</span>
                     <input type="text" placeholder="Search data, features...">
-                </div>
+        </div>
             </div>
             <div class="navbar-right">
                 <button class="nav-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
                 <button class="nav-btn" onclick="alert('Help coming soon!')" title="Help">❓</button>
-            </div>
         </div>
+    </div>
 
         <!-- Content Area -->
         <div class="content-area">
@@ -745,25 +745,25 @@
                     <!-- Upload Section -->
                     <div class="upload-section">
                         <div>
-                            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
                                 <div class="upload-icon">📁</div>
                                 <div class="upload-text">Upload Your File</div>
                                 <div class="upload-subtext">Drag, drop or click (.xlsx, .xls, .csv)</div>
                             </div>
                             <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(event)">
                             <button class="btn btn-primary" onclick="uploadFile()">📤 Upload & Analyze</button>
-                        </div>
+            </div>
 
                         <!-- Statistics -->
                         <div class="stats-grid">
-                            <div class="stat-card">
+                <div class="stat-card">
                                 <div class="stat-value" id="filesCount">0</div>
                                 <div class="stat-label">Files Uploaded</div>
-                            </div>
-                            <div class="stat-card">
+                </div>
+                <div class="stat-card">
                                 <div class="stat-value" id="rowsCount">0</div>
                                 <div class="stat-label">Total Rows</div>
-                            </div>
+                </div>
                             <div class="stat-card">
                                 <div class="stat-value" id="colsCount">0</div>
                                 <div class="stat-label">Columns</div>
@@ -772,8 +772,8 @@
                                 <div class="stat-value" id="qualityScore">0%</div>
                                 <div class="stat-label">Data Quality</div>
                             </div>
-                        </div>
-                    </div>
+            </div>
+        </div>
 
                     <!-- AI Analysis -->
                     <div class="ai-section">
@@ -792,16 +792,16 @@
                     <div class="query-box">
                         <div class="query-title">
                             🧠 Ask Your Excel Sheet Anything
-                        </div>
+                </div>
                         <div class="query-input-group">
                             <input type="text" class="query-input" id="queryInput" 
                                    placeholder="e.g., What's the average? Show top products. Find patterns..."
                                    onkeypress="handleQueryKeyPress(event)">
                             <button class="query-btn" onclick="submitQuery()">Ask</button>
-                        </div>
+                </div>
                         <div class="query-results" id="queryResults">
                             <div id="queryContent"></div>
-                        </div>
+                </div>
                     </div>
                 </div>
             </div>
@@ -812,7 +812,7 @@
                     <div class="card-title">📊 Analytics</div>
                     <p style="color: var(--text-gray);">Analytics content coming soon...</p>
                 </div>
-            </div>
+        </div>
 
             <!-- Charts Section -->
             <div id="charts" class="section">
@@ -820,7 +820,7 @@
                     <div class="card-title">📈 Charts</div>
                     <p style="color: var(--text-gray);">Charts content coming soon...</p>
                 </div>
-            </div>
+        </div>
 
             <!-- Insights Section -->
             <div id="insights" class="section">
@@ -828,7 +828,7 @@
                     <div class="card-title">💡 Insights</div>
                     <p style="color: var(--text-gray);">Insights content coming soon...</p>
                 </div>
-            </div>
+        </div>
 
             <!-- Data Tools Section -->
             <div id="datatools" class="section">
@@ -836,7 +836,7 @@
                     <div class="card-title">🔧 Data Tools</div>
                     <p style="color: var(--text-gray);">Data Tools content coming soon...</p>
                 </div>
-            </div>
+        </div>
 
             <!-- Features Section -->
             <div id="features" class="section">
@@ -844,7 +844,7 @@
                     <div class="card-title">⚡ Features</div>
                     <p style="color: var(--text-gray);">Features content coming soon...</p>
                 </div>
-            </div>
+        </div>
 
             <!-- Export Section -->
             <div id="export" class="section">
@@ -1095,6 +1095,581 @@
             const theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
         }
+
+        // Settings Modal Functions
+        function openSettingsModal() {
+            const settingsModal = document.getElementById('settingsModal');
+            if (settingsModal) {
+                settingsModal.classList.add('active');
+                loadSettingsValues();
+            }
+        }
+
+        function closeSettingsModal() {
+            const settingsModal = document.getElementById('settingsModal');
+            if (settingsModal) {
+                settingsModal.classList.remove('active');
+            }
+        }
+
+        function loadSettingsValues() {
+            // Load user profile
+            document.getElementById('settingsFullName').value = localStorage.getItem('userFullName') || '';
+            document.getElementById('settingsEmail').value = localStorage.getItem('userEmail') || '';
+            document.getElementById('settingsRole').value = localStorage.getItem('userRole') || 'Data Analyst';
+            document.getElementById('settingsOrganization').value = localStorage.getItem('userOrganization') || 'Personal';
+            
+            // Load theme preference
+            const theme = localStorage.getItem('theme') || 'light';
+            document.getElementById('themePreference').value = theme;
+            
+            // Load preferences
+            document.getElementById('autoSave').checked = localStorage.getItem('autoSave') !== 'false';
+            document.getElementById('notifications').checked = localStorage.getItem('notifications') !== 'false';
+            document.getElementById('dataSharing').checked = localStorage.getItem('dataSharing') === 'true';
+        }
+
+        function saveSettings() {
+            // Save user profile
+            localStorage.setItem('userFullName', document.getElementById('settingsFullName').value);
+            localStorage.setItem('userEmail', document.getElementById('settingsEmail').value);
+            localStorage.setItem('userRole', document.getElementById('settingsRole').value);
+            localStorage.setItem('userOrganization', document.getElementById('settingsOrganization').value);
+            
+            // Save theme preference
+            const theme = document.getElementById('themePreference').value;
+            localStorage.setItem('theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            // Save preferences
+            localStorage.setItem('autoSave', document.getElementById('autoSave').checked);
+            localStorage.setItem('notifications', document.getElementById('notifications').checked);
+            localStorage.setItem('dataSharing', document.getElementById('dataSharing').checked);
+            
+            showSettingsNotification('✅ Settings saved successfully!');
+        }
+
+        function showSettingsNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ Are you sure you want to clear all data? This action cannot be undone.')) {
+                localStorage.clear();
+                showSettingsNotification('✅ All data cleared');
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 1500);
+            }
+        }
+
+        function exportUserSettings() {
+            const settings = {
+                profile: {
+                    name: localStorage.getItem('userFullName'),
+                    email: localStorage.getItem('userEmail'),
+                    role: localStorage.getItem('userRole'),
+                    organization: localStorage.getItem('userOrganization')
+                },
+                preferences: {
+                    theme: localStorage.getItem('theme'),
+                    autoSave: localStorage.getItem('autoSave'),
+                    notifications: localStorage.getItem('notifications'),
+                    dataSharing: localStorage.getItem('dataSharing')
+                },
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(settings, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'analyzx-settings-backup.json';
+            link.click();
+            showSettingsNotification('✅ Settings exported successfully');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = 'auth.html';
+            }
+        }
+
+        function switchSettingsTab(tabName) {
+            const tabs = document.querySelectorAll('.settings-tab');
+            const buttons = document.querySelectorAll('.settings-tab-btn');
+            
+            tabs.forEach(tab => tab.classList.add('hidden'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('settingsModal');
+            if (modal && e.target === modal) {
+                closeSettingsModal();
+            }
+        });
+
+        // Load theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadSettingsValues();
+        });
     </script>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal-overlay" id="settingsModal">
+        <div class="settings-modal">
+            <div class="settings-header">
+                <h2>⚙️ Settings</h2>
+                <button class="settings-close-btn" onclick="closeSettingsModal()">✕</button>
+            </div>
+
+            <div class="settings-tabs">
+                <button class="settings-tab-btn active" onclick="switchSettingsTab('profile')">👤 Profile</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('preferences')">🎨 Preferences</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('privacy')">🔒 Privacy & Security</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('data')">💾 Data & Storage</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('about')">ℹ️ About</button>
+            </div>
+
+            <div class="settings-content">
+                <!-- Profile Tab -->
+                <div class="settings-tab" id="profile-tab">
+                    <div class="settings-section">
+                        <h3>User Profile</h3>
+                        <div class="settings-form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="settingsFullName" class="settings-input" placeholder="Your full name">
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="settingsEmail" class="settings-input" placeholder="your@email.com">
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Role</label>
+                            <select id="settingsRole" class="settings-input">
+                                <option>Data Analyst</option>
+                                <option>Data Scientist</option>
+                                <option>Business Analyst</option>
+                                <option>Manager</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Organization</label>
+                            <input type="text" id="settingsOrganization" class="settings-input" placeholder="Your organization">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences Tab -->
+                <div class="settings-tab hidden" id="preferences-tab">
+                    <div class="settings-section">
+                        <h3>Appearance</h3>
+                        <div class="settings-form-group">
+                            <label>Theme</label>
+                            <select id="themePreference" class="settings-input" onchange="saveSettings()">
+                                <option value="light">☀️ Light Mode</option>
+                                <option value="dark">🌙 Dark Mode</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Features</h3>
+                        <div class="settings-checkbox-group">
+                            <input type="checkbox" id="autoSave" class="settings-checkbox">
+                            <label for="autoSave">Auto-save work</label>
+                        </div>
+                        <div class="settings-checkbox-group">
+                            <input type="checkbox" id="notifications" class="settings-checkbox">
+                            <label for="notifications">Enable notifications</label>
+                        </div>
+                        <div class="settings-checkbox-group">
+                            <input type="checkbox" id="dataSharing" class="settings-checkbox">
+                            <label for="dataSharing">Allow analytics data sharing</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy & Security Tab -->
+                <div class="settings-tab hidden" id="privacy-tab">
+                    <div class="settings-section">
+                        <h3>Security Settings</h3>
+                        <button class="settings-button secondary">🔐 Change Password</button>
+                        <button class="settings-button secondary">📱 Two-Factor Authentication</button>
+                        <button class="settings-button secondary">🗺️ View Active Sessions</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Privacy Controls</h3>
+                        <button class="settings-button secondary">👁️ View Privacy Policy</button>
+                        <button class="settings-button secondary">📋 Download Your Data</button>
+                        <button class="settings-button secondary">❌ Request Data Deletion</button>
+                    </div>
+                </div>
+
+                <!-- Data & Storage Tab -->
+                <div class="settings-tab hidden" id="data-tab">
+                    <div class="settings-section">
+                        <h3>Storage & Backup</h3>
+                        <div class="storage-info">
+                            <p>📊 Local Storage Used: <strong>~500 KB</strong></p>
+                            <p>📁 Files Uploaded: <strong id="storageFiles">0</strong></p>
+                        </div>
+                        <button class="settings-button secondary" onclick="exportUserSettings()">💾 Export Settings</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Danger Zone</h3>
+                        <button class="settings-button danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+                    </div>
+                </div>
+
+                <!-- About Tab -->
+                <div class="settings-tab hidden" id="about-tab">
+                    <div class="settings-section">
+                        <h3>About AnalysX</h3>
+                        <div class="about-info">
+                            <p><strong>Version:</strong> 2.1.0</p>
+                            <p><strong>Build:</strong> 2026-01-18</p>
+                            <p><strong>AI Analytics Platform</strong></p>
+                            <p style="margin-top: 15px; color: var(--text-light); font-size: 13px;">
+                                AnalysX is an advanced AI-powered data analytics platform built with modern technologies. 
+                                It enables seamless Excel data analysis with intelligent predictions and insights.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Support & Documentation</h3>
+                        <button class="settings-button secondary">📚 View Documentation</button>
+                        <button class="settings-button secondary">🐛 Report a Bug</button>
+                        <button class="settings-button secondary">💬 Feedback & Suggestions</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-footer">
+                <button class="settings-button primary" onclick="saveSettings()">✅ Save Changes</button>
+                <button class="settings-button logout" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Settings Modal Styles */
+        .settings-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-modal-overlay.active {
+            display: flex;
+        }
+
+        .settings-modal {
+            background: var(--bg-white);
+            border-radius: 14px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 30px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .settings-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .settings-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .settings-close-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .settings-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 16px 30px;
+            border-bottom: 1px solid var(--border-light);
+            overflow-x: auto;
+        }
+
+        .settings-tab-btn {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .settings-tab-btn:hover {
+            background: var(--bg-gray);
+            color: var(--text-dark);
+        }
+
+        .settings-tab-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .settings-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 30px;
+        }
+
+        .settings-tab {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-tab.hidden {
+            display: none;
+        }
+
+        .settings-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+
+        .settings-section h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+
+        .settings-form-group {
+            margin-bottom: 16px;
+        }
+
+        .settings-form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .settings-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--bg-gray);
+            color: var(--text-dark);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .settings-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-white);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .settings-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .settings-checkbox-group:hover {
+            background: var(--bg-gray);
+        }
+
+        .settings-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .settings-checkbox-group label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .settings-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .settings-button.secondary {
+            background: var(--bg-gray);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+        }
+
+        .settings-button.secondary:hover {
+            background: var(--border-light);
+        }
+
+        .settings-button.primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .settings-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .settings-button.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .settings-button.danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .settings-button.logout {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
+        }
+
+        .settings-button.logout:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .storage-info {
+            background: var(--bg-gray);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .storage-info p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .about-info {
+            background: var(--bg-gray);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .about-info p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .settings-footer {
+            display: flex;
+            gap: 12px;
+            padding: 20px 30px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .settings-footer .settings-button {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
 </body>
 </html>

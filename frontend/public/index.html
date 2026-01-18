@@ -746,6 +746,9 @@
         </nav>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- Main Container -->
     <div class="main-container">
         <!-- Top Navbar -->
@@ -907,6 +910,44 @@
             checkLibraries();
         });
 
+        // Toast Notification System
+        function showToast(title, message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            if (!container) {
+                console.error('Toast container not found');
+                return;
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type] || icons.info}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    ${message ? `<div class="toast-message">${message}</div>` : ''}
+                </div>
+                <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
+                <div class="toast-progress"></div>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto remove after duration
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, duration);
+        }
+
         // Check if required libraries are loaded
         function checkLibraries() {
             const issues = [];
@@ -959,16 +1000,19 @@
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) {
-                alert('❌ No file selected');
+                showToast('File Upload', 'No file selected. Please choose an Excel file.', 'warning');
                 return;
             }
 
             // Check if XLSX library is loaded
             if (typeof XLSX === 'undefined') {
-                alert('❌ Excel library not loaded. Please refresh the page and try again.');
+                showToast('Library Error', 'Excel library not loaded. Please refresh the page.', 'error');
                 console.error('XLSX library is not defined');
                 return;
             }
+
+            // Show loading state
+            showToast('Processing...', 'Analyzing your Excel file', 'info', 5000);
 
             try {
                 const reader = new FileReader();
@@ -976,7 +1020,7 @@
                 reader.onload = (e) => {
                     try {
                         if (typeof XLSX === 'undefined') {
-                            alert('❌ Excel library not available');
+                            showToast('Error', 'Excel library not available', 'error');
                             return;
                         }
 
@@ -984,7 +1028,7 @@
                         const workbook = XLSX.read(data, { type: 'array' });
                         
                         if (!workbook || !workbook.SheetNames || workbook.SheetNames.length === 0) {
-                            alert('❌ No sheets found in file');
+                            showToast('Invalid File', 'No sheets found in the file', 'error');
                             return;
                         }
                         
@@ -993,37 +1037,37 @@
                         currentData = XLSX.utils.sheet_to_json(sheet);
                         
                         if (!currentData || currentData.length === 0) {
-                            alert('❌ File is empty or has no data');
+                            showToast('Empty File', 'File has no data rows', 'warning');
                             return;
                         }
                         
                         performAIAnalysis();
                         updateDashboard();
-                        alert('✅ File uploaded and analyzed successfully!');
+                        showToast('Success!', `File uploaded: ${currentData.length} rows, ${Object.keys(currentData[0]).length} columns`, 'success');
                         console.log('File upload successful. Rows:', currentData.length);
                     } catch (error) {
                         console.error('Error processing file:', error);
-                        alert('❌ Error processing file: ' + error.message);
+                        showToast('Processing Error', error.message, 'error');
                     }
                 };
                 
                 reader.onerror = (error) => {
                     console.error('FileReader error:', error);
-                    alert('❌ Error reading file');
+                    showToast('Read Error', 'Failed to read the file', 'error');
                 };
                 
                 reader.readAsArrayBuffer(file);
             } catch (error) {
                 console.error('Error in handleFileUpload:', error);
-                alert('❌ Error: ' + error.message);
+                showToast('Error', error.message, 'error');
             }
         }
 
         function uploadFile() {
             if (currentData && currentData.length > 0) {
-                alert('✅ File uploaded successfully!\n\nRows: ' + currentData.length + '\nColumns: ' + Object.keys(currentData[0]).length);
+                showToast('Upload Complete', `Rows: ${currentData.length} | Columns: ${Object.keys(currentData[0]).length}`, 'success');
             } else {
-                alert('❌ Please select and upload a valid Excel file first');
+                showToast('No Data', 'Please select and upload a valid Excel file first', 'warning');
             }
         }
 
@@ -1142,12 +1186,12 @@
         function submitQuery() {
             const query = document.getElementById('queryInput').value.trim();
             if (!query) {
-                alert('Please enter a question');
+                showToast('Empty Query', 'Please enter a question about your data', 'warning');
                 return;
             }
 
             if (!currentData) {
-                alert('Please upload a file first');
+                showToast('No Data', 'Please upload a file first', 'warning');
                 return;
             }
 
@@ -1863,6 +1907,137 @@
             to {
                 opacity: 1;
                 transform: translateX(0);
+            }
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            pointer-events: none;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+            border-left: 4px solid;
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
+        .toast.info {
+            border-left-color: var(--primary);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: var(--text-gray);
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-light);
+            transition: color 0.2s ease;
+            flex-shrink: 0;
+            padding: 0;
+            margin-left: 8px;
+        }
+
+        .toast-close:hover {
+            color: var(--text-gray);
+        }
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 0 0 8px 0;
+            animation: progress 3s linear forwards;
+        }
+
+        .toast.success .toast-progress {
+            background: linear-gradient(90deg, var(--success), #34d399);
+        }
+
+        .toast.error .toast-progress {
+            background: linear-gradient(90deg, var(--danger), #f87171);
+        }
+
+        .toast.warning .toast-progress {
+            background: linear-gradient(90deg, var(--warning), #fbbf24);
+        }
+
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .toast {
+                margin: 0;
             }
         }
     </style>

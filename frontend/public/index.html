@@ -147,7 +147,7 @@
         .navbar-hamburger-wrapper {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0;
         }
 
         .navbar-hamburger {
@@ -174,18 +174,6 @@
 
         .navbar-hamburger:active {
             transform: scale(0.95);
-        }
-
-        .navbar-hamburger-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar.collapsed .navbar-hamburger-title {
-            opacity: 0;
-            display: none;
         }
 
         .nav-item {
@@ -301,7 +289,7 @@
             gap: 15px;
         }
 
-        .navbar-brand-right {
+        .navbar-brand-left {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -312,7 +300,7 @@
             transition: all 0.3s ease;
         }
 
-        .navbar-brand-right:hover {
+        .navbar-brand-left:hover {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
             border-color: var(--primary);
         }
@@ -775,9 +763,9 @@
         <!-- Top Navbar -->
     <div class="navbar">
         <div class="navbar-left">
-                <div class="navbar-hamburger-wrapper">
-                    <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
-                    <span class="navbar-hamburger-title">AnalysX</span>
+                <div class="navbar-brand-left">
+                    <span class="navbar-brand-icon">📊</span>
+                    <span class="navbar-brand-text">AnalysX</span>
                 </div>
                 <div class="navbar-search">
                     <span>🔍</span>
@@ -785,12 +773,11 @@
         </div>
             </div>
             <div class="navbar-right">
-                <div class="navbar-brand-right">
-                    <span class="navbar-brand-icon">🧠</span>
-                    <span class="navbar-brand-text">AnalysX</span>
-                </div>
                 <button class="nav-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
                 <button class="nav-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
+                <div class="navbar-hamburger-wrapper">
+                    <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+                </div>
         </div>
     </div>
 

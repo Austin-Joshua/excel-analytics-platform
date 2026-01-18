@@ -1125,8 +1125,8 @@
         // Store selected file
         let selectedFile = null;
 
-        // File Upload with advanced retry
-        function handleFileUpload(event, retryCount = 0) {
+        // Handle file selection - ONLY display name, don't upload yet
+        function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) {
                 showToast('File Upload', 'No file selected. Please choose an Excel file.', 'warning');
@@ -1136,11 +1136,24 @@
             // Store the selected file
             selectedFile = file;
 
-            // Display file name
+            // Display file name only
             displayFileName(file);
 
             // Reset form for multiple uploads
             event.target.value = '';
+
+            console.log(`File selected (not uploaded): ${file.name}`);
+            showToast('File Selected', `Ready to analyze: ${file.name}`, 'info', 3000);
+        }
+
+        // Process and upload file - called only when "Upload & Analyze" button is clicked
+        function processAndUploadFile(retryCount = 0) {
+            if (!selectedFile) {
+                showToast('No File', 'Please select a file first', 'warning');
+                return;
+            }
+
+            const file = selectedFile;
 
             // Check if XLSX library is loaded, with retry logic
             if (typeof XLSX === 'undefined') {
@@ -1152,7 +1165,7 @@
                 if (retryCount < 15) {
                     // Retry every 300ms for up to 4.5 seconds
                     setTimeout(() => {
-                        handleFileUpload(event, retryCount + 1);
+                        processAndUploadFile(retryCount + 1);
                     }, 300);
                     return;
                 } else {
@@ -1210,17 +1223,19 @@
                 
                 reader.readAsArrayBuffer(file);
             } catch (error) {
-                console.error('Error in handleFileUpload:', error);
+                console.error('Error in processAndUploadFile:', error);
                 showToast('Error', error.message, 'error');
             }
         }
 
         function uploadFile() {
-            if (currentData && currentData.length > 0) {
-                showToast('Upload Complete', `Rows: ${currentData.length} | Columns: ${Object.keys(currentData[0]).length}`, 'success');
-            } else {
-                showToast('No Data', 'Please select and upload a valid Excel file first', 'warning');
+            if (!selectedFile) {
+                showToast('No File Selected', 'Please select a file first', 'warning');
+                return;
             }
+
+            // Call the process and upload function
+            processAndUploadFile();
         }
 
         // Update Dashboard

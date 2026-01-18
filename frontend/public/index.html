@@ -289,34 +289,6 @@
             gap: 15px;
         }
 
-        .navbar-brand-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
-            border: 1px solid var(--border-light);
-            transition: all 0.3s ease;
-        }
-
-        .navbar-brand-left:hover {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
-            border-color: var(--primary);
-        }
-
-        .navbar-brand-icon {
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .navbar-brand-text {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--primary);
-            white-space: nowrap;
-        }
-
         .nav-btn {
             background: none;
             border: none;
@@ -763,9 +735,8 @@
         <!-- Top Navbar -->
     <div class="navbar">
         <div class="navbar-left">
-                <div class="navbar-brand-left">
-                    <span class="navbar-brand-icon">📊</span>
-                    <span class="navbar-brand-text">AnalysX</span>
+                <div class="navbar-hamburger-wrapper">
+                    <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
                 </div>
                 <div class="navbar-search">
                     <span>🔍</span>
@@ -775,9 +746,6 @@
             <div class="navbar-right">
                 <button class="nav-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
                 <button class="nav-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
-                <div class="navbar-hamburger-wrapper">
-                    <button class="navbar-hamburger" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
-                </div>
         </div>
     </div>
 

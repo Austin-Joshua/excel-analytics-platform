@@ -430,6 +430,73 @@
             display: none;
         }
 
+        /* File Name Display Styles */
+        .file-name-display {
+            background: linear-gradient(135deg, var(--bg-light), var(--bg-white));
+            border: 2px solid var(--success);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 16px 0;
+            animation: slideIn 0.3s ease;
+        }
+
+        .file-name-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .file-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-dark);
+            word-break: break-word;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-name::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .file-size {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-top: 4px;
+        }
+
+        .file-clear-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-light);
+            transition: all 0.2s ease;
+            padding: 8px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .file-clear-btn:hover {
+            background: var(--bg-light);
+            color: var(--danger);
+            transform: scale(1.1);
+        }
+
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -788,6 +855,19 @@
                                 <div class="upload-subtext">Drag, drop or click (.xlsx, .xls, .csv)</div>
                             </div>
                             <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(event)">
+                            
+                            <!-- File Name Display -->
+                            <div id="fileNameDisplay" class="file-name-display" style="display: none;">
+                                <div class="file-name-info">
+                                    <span class="file-icon">📄</span>
+                                    <div class="file-details">
+                                        <div class="file-name" id="displayFileName"></div>
+                                        <div class="file-size" id="displayFileSize"></div>
+                                    </div>
+                                    <button class="file-clear-btn" onclick="clearFileSelection()">✕</button>
+                                </div>
+                            </div>
+                            
                             <button class="btn btn-primary" onclick="uploadFile()">📤 Upload & Analyze</button>
             </div>
 
@@ -948,6 +1028,52 @@
             }, duration);
         }
 
+        // Display file name when selected
+        function displayFileName(file) {
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            const displayFileName = document.getElementById('displayFileName');
+            const displayFileSize = document.getElementById('displayFileSize');
+
+            if (!fileNameDisplay || !displayFileName || !displayFileSize) {
+                console.error('File display elements not found');
+                return;
+            }
+
+            // Format file size
+            const sizeInKB = (file.size / 1024).toFixed(2);
+            const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+            const displaySize = file.size > 1024 * 1024 
+                ? `${sizeInMB} MB` 
+                : `${sizeInKB} KB`;
+
+            // Display file name and size
+            displayFileName.textContent = file.name;
+            displayFileSize.textContent = `Size: ${displaySize}`;
+            fileNameDisplay.style.display = 'block';
+
+            console.log(`File selected: ${file.name} (${displaySize})`);
+        }
+
+        // Clear file selection
+        function clearFileSelection() {
+            const fileInput = document.getElementById('fileInput');
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            
+            if (fileNameDisplay) {
+                fileNameDisplay.style.display = 'none';
+            }
+            
+            selectedFile = null;
+            currentData = null;
+            
+            showToast('Cleared', 'File selection cleared', 'info', 2000);
+            console.log('File selection cleared');
+        }
+
         // Check if required libraries are loaded
         function checkLibraries() {
             const issues = [];
@@ -996,6 +1122,9 @@
             }
         }
 
+        // Store selected file
+        let selectedFile = null;
+
         // File Upload with advanced retry
         function handleFileUpload(event, retryCount = 0) {
             const file = event.target.files[0];
@@ -1003,6 +1132,15 @@
                 showToast('File Upload', 'No file selected. Please choose an Excel file.', 'warning');
                 return;
             }
+
+            // Store the selected file
+            selectedFile = file;
+
+            // Display file name
+            displayFileName(file);
+
+            // Reset form for multiple uploads
+            event.target.value = '';
 
             // Check if XLSX library is loaded, with retry logic
             if (typeof XLSX === 'undefined') {
@@ -1024,8 +1162,8 @@
                 }
             }
 
-            // Show loading state
-            showToast('Processing...', 'Analyzing your Excel file', 'info', 5000);
+            // Show loading state with file name
+            showToast('Processing...', `Analyzing: ${file.name}`, 'info', 5000);
 
             try {
                 const reader = new FileReader();
@@ -1056,8 +1194,9 @@
                         
                         performAIAnalysis();
                         updateDashboard();
-                        showToast('Success!', `File uploaded: ${currentData.length} rows, ${Object.keys(currentData[0]).length} columns`, 'success');
-                        console.log('File upload successful. Rows:', currentData.length);
+                        const colCount = Object.keys(currentData[0]).length;
+                        showToast('Success!', `${file.name}\n${currentData.length} rows × ${colCount} columns`, 'success');
+                        console.log(`File: ${file.name} | Rows: ${currentData.length} | Columns: ${colCount}`);
                     } catch (error) {
                         console.error('Error processing file:', error);
                         showToast('Processing Error', error.message, 'error');
@@ -1066,7 +1205,7 @@
                 
                 reader.onerror = (error) => {
                     console.error('FileReader error:', error);
-                    showToast('Read Error', 'Failed to read the file', 'error');
+                    showToast('Read Error', `Failed to read: ${file.name}`, 'error');
                 };
                 
                 reader.readAsArrayBuffer(file);

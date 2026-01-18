@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnalysX - Sign In / Sign Up</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="theme-color" content="#1e3a8a">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f7fb;
+            --bg-tertiary: #e8eff7;
+            --text-primary: #1a2332;
+            --text-secondary: #5a6b7f;
+            --text-tertiary: #8a9aaf;
+            --accent-primary: #1e3a8a;
+            --accent-secondary: #3b82f6;
+            --accent-light: #eff6ff;
+            --border-color: #d1d5db;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-md: rgba(0, 0, 0, 0.12);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --accent-primary: #60a5fa;
+            --accent-secondary: #93c5fd;
+            --accent-light: #1e3a8a;
+            --border-color: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-md: rgba(0, 0, 0, 0.5);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text-primary);
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: var(--bg-primary);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-form {
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-banner {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .banner-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .banner-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .banner-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .banner-features {
+            margin-top: 40px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .feature-icon {
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+            background: var(--bg-primary);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .form-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 30px;
+        }
+
+        .form-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .checkbox-label a {
+            color: var(--accent-secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .checkbox-label a:hover {
+            text-decoration: underline;
+        }
+
+        .form-button {
+            width: 100%;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(30, 58, 138, 0.3);
+        }
+
+        .form-button:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            gap: 10px;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .divider-text {
+            color: var(--text-tertiary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .social-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .social-button {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .social-button:hover {
+            background: var(--accent-light);
+            border-color: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+
+        .auth-toggle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .auth-toggle a {
+            color: var(--accent-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid;
+            display: none;
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-left-color: var(--success);
+            display: block;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-left-color: var(--danger);
+            display: block;
+        }
+
+        .form-hidden {
+            display: none;
+        }
+
+        .theme-toggle-auth {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-auth:hover {
+            background: var(--accent-light);
+            border-color: var(--accent-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-banner {
+                display: none;
+            }
+
+            .auth-form {
+                padding: 40px 30px;
+            }
+
+            .form-title {
+                font-size: 24px;
+            }
+
+            .banner-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle-auth" onclick="toggleAuthTheme()" title="Toggle Theme">
+        <span id="authThemeIcon">🌙</span>
+    </button>
+
+    <div class="auth-container">
+        <!-- Sign In Form -->
+        <div class="auth-form" id="signInForm">
+            <div class="form-title">Welcome Back 👋</div>
+            <div class="form-subtitle">Sign in to your AnalysX account</div>
+
+            <div class="alert" id="signInAlert"></div>
+
+            <div class="form-group">
+                <label class="form-label">📧 Email Address</label>
+                <input type="email" class="form-input" id="signInEmail" placeholder="your@email.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔐 Password</label>
+                <input type="password" class="form-input" id="signInPassword" placeholder="Enter your password">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" class="checkbox-input" id="rememberMe">
+                <label class="checkbox-label" for="rememberMe">Remember me</label>
+            </div>
+
+            <button class="form-button" onclick="handleSignIn()">Sign In</button>
+
+            <div class="divider">
+                <div class="divider-line"></div>
+                <div class="divider-text">or continue with</div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div class="social-buttons">
+                <button class="social-button" onclick="signInWithGoogle()">
+                    <span>📱</span> Google
+                </button>
+                <button class="social-button" onclick="signInWithGithub()">
+                    <span>🐙</span> GitHub
+                </button>
+            </div>
+
+            <div class="auth-toggle">
+                Don't have an account? <a onclick="toggleAuthForms()">Sign Up</a>
+            </div>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div class="auth-form form-hidden" id="signUpForm">
+            <div class="form-title">Get Started 🚀</div>
+            <div class="form-subtitle">Create your AnalysX account</div>
+
+            <div class="alert" id="signUpAlert"></div>
+
+            <div class="form-group">
+                <label class="form-label">👤 Full Name</label>
+                <input type="text" class="form-input" id="signUpName" placeholder="Your full name">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📧 Email Address</label>
+                <input type="email" class="form-input" id="signUpEmail" placeholder="your@email.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔐 Password</label>
+                <input type="password" class="form-input" id="signUpPassword" placeholder="Min. 8 characters">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔐 Confirm Password</label>
+                <input type="password" class="form-input" id="signUpConfirmPassword" placeholder="Confirm password">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" class="checkbox-input" id="agreeTerms">
+                <label class="checkbox-label" for="agreeTerms">
+                    I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+                </label>
+            </div>
+
+            <button class="form-button" onclick="handleSignUp()">Create Account</button>
+
+            <div class="divider">
+                <div class="divider-line"></div>
+                <div class="divider-text">or</div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div class="social-buttons">
+                <button class="social-button" onclick="signUpWithGoogle()">
+                    <span>📱</span> Google
+                </button>
+                <button class="social-button" onclick="signUpWithGithub()">
+                    <span>🐙</span> GitHub
+                </button>
+            </div>
+
+            <div class="auth-toggle">
+                Already have an account? <a onclick="toggleAuthForms()">Sign In</a>
+            </div>
+        </div>
+
+        <!-- Banner -->
+        <div class="auth-banner">
+            <div class="banner-icon" style="font-size: 100px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100" height="100" style="filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));">
+                    <defs>
+                        <linearGradient id="bgGradAuth" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="chartGradAuth" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#93c5fd;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="arrowGradAuth" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#6ee7b7;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="512" height="512" rx="120" fill="url(#bgGradAuth)"/>
+                    <g transform="translate(120, 280)">
+                        <rect x="10" y="80" width="35" height="80" fill="url(#chartGradAuth)" opacity="0.7" rx="4"/>
+                        <rect x="60" y="50" width="35" height="110" fill="url(#chartGradAuth)" opacity="0.85" rx="4"/>
+                        <rect x="110" y="20" width="35" height="140" fill="url(#chartGradAuth)" rx="4"/>
+                        <rect x="160" y="60" width="35" height="100" fill="url(#chartGradAuth)" opacity="0.8" rx="4"/>
+                    </g>
+                    <g transform="translate(200, 120)">
+                        <path d="M 20 60 L 40 40 L 40 50 L 80 20 L 80 35 L 60 55 Z" fill="#60a5fa" opacity="0.9"/>
+                        <path d="M 50 40 L 85 10 L 85 25 L 120 -10 L 120 5 L 85 35 Z" fill="#34d399" opacity="0.95"/>
+                        <path d="M 130 80 L 150 60 L 140 60 L 140 -10 L 160 -10 L 160 60 L 150 60 Z" fill="url(#arrowGradAuth)"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="banner-title">AnalysX</div>
+            <div class="banner-subtitle">AI-Powered Data Analytics Platform</div>
+
+            <div class="banner-features">
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <span>Advanced AI Analytics</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔗</span>
+                    <span>Correlation Analysis</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎯</span>
+                    <span>Smart Clustering</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📈</span>
+                    <span>Trend Prediction</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💡</span>
+                    <span>AI-Generated Insights</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🤖</span>
+                    <span>Natural Language Query</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = localStorage.getItem('theme') || 'light';
+
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', () => {
+            applyAuthTheme(currentTheme);
+        });
+
+        function toggleAuthTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', currentTheme);
+            applyAuthTheme(currentTheme);
+        }
+
+        function applyAuthTheme(theme) {
+            const icon = document.getElementById('authThemeIcon');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            }
+        }
+
+        function toggleAuthForms() {
+            document.getElementById('signInForm').classList.toggle('form-hidden');
+            document.getElementById('signUpForm').classList.toggle('form-hidden');
+            // Clear alerts
+            document.getElementById('signInAlert').textContent = '';
+            document.getElementById('signUpAlert').textContent = '';
+        }
+
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+        }
+
+        function handleSignIn() {
+            const email = document.getElementById('signInEmail').value.trim();
+            const password = document.getElementById('signInPassword').value.trim();
+
+            if (!email || !password) {
+                showAlert('signInAlert', '❌ Please fill in all fields', 'error');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                showAlert('signInAlert', '❌ Please enter a valid email', 'error');
+                return;
+            }
+
+            // Simulate successful login
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userFullName', email.split('@')[0]);
+            localStorage.setItem('isLoggedIn', 'true');
+
+            showAlert('signInAlert', '✅ Signing in...', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function handleSignUp() {
+            const name = document.getElementById('signUpName').value.trim();
+            const email = document.getElementById('signUpEmail').value.trim();
+            const password = document.getElementById('signUpPassword').value.trim();
+            const confirmPassword = document.getElementById('signUpConfirmPassword').value.trim();
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+
+            if (!name || !email || !password || !confirmPassword) {
+                showAlert('signUpAlert', '❌ Please fill in all fields', 'error');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                showAlert('signUpAlert', '❌ Please enter a valid email', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showAlert('signUpAlert', '❌ Password must be at least 8 characters', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('signUpAlert', '❌ Passwords do not match', 'error');
+                return;
+            }
+
+            if (!agreeTerms) {
+                showAlert('signUpAlert', '❌ Please agree to terms and privacy policy', 'error');
+                return;
+            }
+
+            // Simulate successful signup
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userFullName', name);
+            localStorage.setItem('userRole', 'Data Analyst');
+            localStorage.setItem('userOrganization', 'Personal');
+            localStorage.setItem('isLoggedIn', 'true');
+
+            showAlert('signUpAlert', '✅ Account created successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function signInWithGoogle() {
+            showAlert('signInAlert', '📱 Google Sign-In feature coming soon', 'success');
+            setTimeout(() => {
+                localStorage.setItem('userEmail', 'user@gmail.com');
+                localStorage.setItem('userFullName', 'Google User');
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function signInWithGithub() {
+            showAlert('signInAlert', '🐙 GitHub Sign-In feature coming soon', 'success');
+            setTimeout(() => {
+                localStorage.setItem('userEmail', 'user@github.com');
+                localStorage.setItem('userFullName', 'GitHub User');
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function signUpWithGoogle() {
+            showAlert('signUpAlert', '📱 Google Sign-Up feature coming soon', 'success');
+            setTimeout(() => {
+                localStorage.setItem('userEmail', 'newuser@gmail.com');
+                localStorage.setItem('userFullName', 'New Google User');
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function signUpWithGithub() {
+            showAlert('signUpAlert', '🐙 GitHub Sign-Up feature coming soon', 'success');
+            setTimeout(() => {
+                localStorage.setItem('userEmail', 'newuser@github.com');
+                localStorage.setItem('userFullName', 'New GitHub User');
+                localStorage.setItem('isLoggedIn', 'true');
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

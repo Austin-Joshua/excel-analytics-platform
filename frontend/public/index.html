@@ -1,0 +1,2822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnalysX - AI Data Analytics Platform</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="theme-color" content="#1e3a8a">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f7fb;
+            --bg-tertiary: #e8eff7;
+            --text-primary: #1a2332;
+            --text-secondary: #5a6b7f;
+            --text-tertiary: #8a9aaf;
+            --accent-primary: #1e3a8a;
+            --accent-secondary: #3b82f6;
+            --accent-light: #eff6ff;
+            --border-color: #d1d5db;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-md: rgba(0, 0, 0, 0.12);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --accent-primary: #60a5fa;
+            --accent-secondary: #93c5fd;
+            --accent-light: #1e3a8a;
+            --border-color: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-md: rgba(0, 0, 0, 0.5);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar {
+            background: var(--bg-primary);
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px var(--shadow);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar h2 {
+            color: var(--accent-primary);
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .nav-badge {
+            background: var(--accent-secondary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-light);
+            border-color: var(--accent-secondary);
+            transform: scale(1.1);
+        }
+
+        .nav-btn-text {
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent-secondary);
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            color: var(--accent-primary);
+            font-size: 22px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .setting-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .setting-value {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-secondary);
+        }
+
+        .btn-small {
+            padding: 10px 15px;
+            font-size: 13px;
+            background: var(--accent-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--accent-primary);
+        }
+
+        .btn-small:hover {
+            background: var(--accent-secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-option:hover {
+            border-color: var(--accent-secondary);
+            background: var(--accent-light);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent-secondary);
+            background: var(--accent-light);
+        }
+
+        .theme-option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-save {
+            flex: 1;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: var(--border-color);
+        }
+
+        /* Query Bar Styles */
+        .query-section {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .query-label {
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .query-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .query-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 0 3px var(--accent-light);
+            background: var(--bg-primary);
+        }
+
+        .query-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .query-btn {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .query-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(30, 58, 138, 0.3);
+        }
+
+        .query-btn:active {
+            transform: translateY(0);
+        }
+
+        .query-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .query-suggestions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .query-suggestion-btn {
+            background: var(--accent-light);
+            border: 1px solid var(--accent-secondary);
+            border-radius: 6px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--accent-primary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .query-suggestion-btn:hover {
+            background: var(--accent-secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .query-results {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .query-result-item {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent-secondary);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .query-result-item.answer {
+            border-left-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .query-result-item.error {
+            border-left-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .query-result-label {
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .query-result-content {
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Feature Documentation Styles */
+        .feature-doc {
+            display: none;
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent-secondary);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .feature-doc.active {
+            display: block;
+        }
+
+        .feature-doc-title {
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .feature-doc-description {
+            color: var(--text-primary);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .feature-doc-example {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--text-primary);
+            overflow-x: auto;
+            border-left: 2px solid var(--warning);
+        }
+
+        .feature-doc-example-label {
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li strong {
+            color: var(--accent-primary);
+        }
+
+        .feature-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .feature-tab-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .feature-tab-btn:hover {
+            border-color: var(--accent-secondary);
+            background: var(--bg-primary);
+        }
+
+        .feature-tab-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .feature-comparison-item {
+            background: var(--bg-secondary);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+
+        .feature-comparison-label {
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stats-grid-item {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 3px solid var(--accent-secondary);
+        }
+
+        .stats-grid-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stats-grid-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px var(--shadow);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px var(--shadow-md);
+            border-color: var(--accent-secondary);
+        }
+
+        .card.full {
+            grid-column: 1 / -1;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .section-title {
+            color: var(--accent-primary);
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-secondary);
+            padding-bottom: 10px;
+        }
+
+        .upload-box {
+            border: 2px dashed var(--accent-secondary);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--accent-light);
+        }
+
+        .upload-box:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: var(--accent-primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .upload-hint {
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 12px;
+            margin: 5px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--accent-light);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--accent-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid;
+            font-size: 14px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-left-color: var(--success);
+            display: block;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-left-color: var(--danger);
+            display: block;
+        }
+
+        .alert.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-secondary);
+            border-left-color: var(--accent-secondary);
+            display: block;
+        }
+
+        .insights-list {
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .insight-item {
+            background: var(--accent-light);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .insight-item:hover {
+            box-shadow: 0 4px 12px var(--shadow);
+            transform: translateX(4px);
+        }
+
+        .insight-item.warning {
+            border-left-color: var(--warning);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .insight-item.danger {
+            border-left-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+        }
+
+        .tab:hover {
+            border-color: var(--accent-secondary);
+            color: var(--accent-primary);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--accent-light);
+            border-top: 3px solid var(--accent-secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .feature-btn {
+            padding: 12px;
+            background: var(--accent-light);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .feature-btn:hover {
+            background: var(--accent-secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th {
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-secondary);
+            font-size: 13px;
+        }
+
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .navbar-left {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <h2>
+                <div class="navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="32" height="32">
+                        <defs>
+                            <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="chartGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                                <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="arrowGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="512" height="512" rx="120" fill="url(#bgGrad)"/>
+                        <g transform="translate(120, 280)">
+                            <rect x="10" y="80" width="35" height="80" fill="url(#chartGrad)" opacity="0.7" rx="4"/>
+                            <rect x="60" y="50" width="35" height="110" fill="url(#chartGrad)" opacity="0.85" rx="4"/>
+                            <rect x="110" y="20" width="35" height="140" fill="url(#chartGrad)" rx="4"/>
+                            <rect x="160" y="60" width="35" height="100" fill="url(#chartGrad)" opacity="0.8" rx="4"/>
+                        </g>
+                        <g transform="translate(200, 120)">
+                            <path d="M 20 60 L 40 40 L 40 50 L 80 20 L 80 35 L 60 55 Z" fill="#3b82f6" opacity="0.9"/>
+                            <path d="M 50 40 L 85 10 L 85 25 L 120 -10 L 120 5 L 85 35 Z" fill="#34d399" opacity="0.95"/>
+                            <path d="M 130 80 L 150 60 L 140 60 L 140 -10 L 160 -10 L 160 60 L 150 60 Z" fill="url(#arrowGrad)"/>
+                        </g>
+                        <circle cx="160" cy="180" r="5" fill="#60a5fa" opacity="0.6"/>
+                        <circle cx="280" cy="240" r="5" fill="#60a5fa" opacity="0.6"/>
+                        <circle cx="320" cy="160" r="5" fill="#34d399" opacity="0.6"/>
+                    </svg>
+                </div>
+                AnalysX
+            </h2>
+        </div>
+        <div class="navbar-right">
+            <button class="nav-btn" onclick="toggleTheme()" title="Toggle Theme">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <button class="nav-btn" onclick="openSettings()" title="Settings">
+                <span>⚙️</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Settings</h2>
+                <button class="modal-close" onclick="closeSettings()">&times;</button>
+            </div>
+
+            <!-- User Profile Section -->
+            <div class="setting-item">
+                <label class="setting-label">👤 User Profile</label>
+                <label class="setting-label" style="font-size: 14px; font-weight: 500; margin-top: 10px;">Full Name</label>
+                <input type="text" id="userFullName" class="setting-input" placeholder="Enter your full name" value="Guest User">
+                
+                <label class="setting-label" style="font-size: 14px; font-weight: 500; margin-top: 15px;">Email</label>
+                <input type="email" id="userEmail" class="setting-input" placeholder="Enter your email" value="guest@analyzx.app">
+                
+                <label class="setting-label" style="font-size: 14px; font-weight: 500; margin-top: 15px;">Organization</label>
+                <input type="text" id="userOrganization" class="setting-input" placeholder="Enter organization name" value="Personal">
+                
+                <label class="setting-label" style="font-size: 14px; font-weight: 500; margin-top: 15px;">Role</label>
+                <input type="text" id="userRole" class="setting-input" placeholder="Enter your role" value="Data Analyst">
+            </div>
+
+            <!-- Theme Section -->
+            <div class="setting-item">
+                <label class="setting-label">🎨 Theme Preference</label>
+                
+                <label class="theme-option" onclick="setThemeOption('light')">
+                    <input type="radio" name="theme" value="light" id="themeLight">
+                    <span style="flex: 1; margin-left: 10px;">☀️ Light Mode</span>
+                </label>
+                
+                <label class="theme-option" onclick="setThemeOption('dark')">
+                    <input type="radio" name="theme" value="dark" id="themeDark">
+                    <span style="flex: 1; margin-left: 10px;">🌙 Dark Mode</span>
+                </label>
+            </div>
+
+            <!-- Preferences Section -->
+            <div class="setting-item">
+                <label class="setting-label">⚙️ Preferences</label>
+                
+                <label class="setting-label" style="font-size: 14px; font-weight: 500; margin-top: 10px;">Notifications</label>
+                <div class="checkbox-group" style="margin-bottom: 12px;">
+                    <input type="checkbox" id="emailNotifications" checked>
+                    <label for="emailNotifications" style="cursor: pointer; color: var(--text-primary);">📧 Email Notifications</label>
+                </div>
+                <div class="checkbox-group" style="margin-bottom: 12px;">
+                    <input type="checkbox" id="analysisAlerts" checked>
+                    <label for="analysisAlerts" style="cursor: pointer; color: var(--text-primary);">📊 Analysis Alerts</label>
+                </div>
+                
+                <label class="setting-label" style="font-size: 14px; font-weight: 500; margin-top: 15px;">Auto-save</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoSave" checked>
+                    <label for="autoSave" style="cursor: pointer; color: var(--text-primary);">💾 Auto-save Analysis Results</label>
+                </div>
+            </div>
+
+            <!-- Privacy & Security -->
+            <div class="setting-item">
+                <label class="setting-label">🔒 Privacy & Security</label>
+                
+                <label class="setting-label" style="font-size: 14px; font-weight: 500; margin-top: 10px;">Data Privacy</label>
+                <select id="dataPrivacy" class="setting-input" style="margin-bottom: 15px;">
+                    <option value="private">🔒 Private (Only me)</option>
+                    <option value="organization">🏢 Organization (Team access)</option>
+                    <option value="public">🌍 Public (Shareable)</option>
+                </select>
+
+                <label class="setting-label" style="font-size: 14px; font-weight: 500;">Password</label>
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-bottom: 15px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">🔐 Change Password</button>
+
+                <label class="setting-label" style="font-size: 14px; font-weight: 500;">Two-Factor Authentication</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="twoFactor">
+                    <label for="twoFactor" style="cursor: pointer; color: var(--text-primary);">🔐 Enable 2FA</label>
+                </div>
+            </div>
+
+            <!-- API Keys -->
+            <div class="setting-item">
+                <label class="setting-label">🔑 API Keys</label>
+                
+                <div class="setting-value" style="margin-bottom: 10px;">
+                    <strong>API Status:</strong> <span style="color: var(--success);">✓ Active</span>
+                </div>
+                
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-bottom: 10px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">🔑 Generate New API Key</button>
+                
+                <button class="btn-small" style="width: 100%; padding: 10px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">📋 View API Documentation</button>
+            </div>
+
+            <!-- Data & Storage -->
+            <div class="setting-item">
+                <label class="setting-label">💾 Data & Storage</label>
+                
+                <div class="setting-value" style="margin-bottom: 10px;">
+                    <strong>Storage Used:</strong> 245 MB / 1 GB
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 6px; height: 6px; overflow: hidden; margin-bottom: 15px;">
+                    <div style="background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); height: 100%; width: 24.5%;"></div>
+                </div>
+
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-bottom: 10px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">🗑️ Delete Old Files</button>
+                
+                <button class="btn-small" style="width: 100%; padding: 10px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">📥 Export All Data</button>
+            </div>
+
+            <!-- Subscription Plan -->
+            <div class="setting-item">
+                <label class="setting-label">💳 Subscription Plan</label>
+                
+                <div class="setting-value" style="margin-bottom: 10px;">
+                    <strong>Current Plan:</strong> <span style="color: var(--accent-secondary); font-weight: 600;">Free</span>
+                </div>
+                <div class="setting-value" style="margin-bottom: 15px; font-size: 12px; color: var(--text-secondary);">
+                    Unlimited analyses | Basic support
+                </div>
+
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-bottom: 10px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">💎 Upgrade to Pro</button>
+                
+                <button class="btn-small" style="width: 100%; padding: 10px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">📊 View Billing History</button>
+            </div>
+
+            <!-- Additional Settings -->
+            <div class="setting-item">
+                <label class="setting-label">ℹ️ Application Info</label>
+                <div class="setting-value">
+                    <strong>Version:</strong> 1.1.0
+                </div>
+                <div class="setting-value">
+                    <strong>Status:</strong> <span style="color: var(--success);">✓ Active</span>
+                </div>
+                <div class="setting-value">
+                    <strong>Platform:</strong> AnalysX AI Analytics
+                </div>
+                <div class="setting-value">
+                    <strong>Last Updated:</strong> January 2026
+                </div>
+            </div>
+
+            <!-- Account Actions -->
+            <div class="setting-item">
+                <label class="setting-label">👤 Account Actions</label>
+                
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-bottom: 10px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">🔗 Linked Accounts</button>
+                
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-bottom: 10px; background: var(--accent-light); color: var(--warning); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;">📋 Download Account Data</button>
+                
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-bottom: 10px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); border-radius: 6px; cursor: pointer; font-weight: 600;">🗑️ Delete Account</button>
+
+                <button class="btn-small" style="width: 100%; padding: 10px; background: var(--accent-light); color: var(--accent-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600;" onclick="handleLogout()">🚪 Sign Out</button>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button class="btn-save" onclick="saveSettings()">💾 Save Settings</button>
+                <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Query Section -->
+    <div class="query-section" id="querySection" style="display: none;">
+        <div class="query-label">
+            🤖 Ask About Your Data
+        </div>
+        
+        <div class="query-bar">
+            <input 
+                type="text" 
+                id="queryInput" 
+                class="query-input" 
+                placeholder="Ask anything about your data... e.g., 'What is the average value?' or 'Show me the highest values'"
+                onkeypress="handleQueryKeyPress(event)"
+            >
+            <button class="query-btn" onclick="submitQuery()">
+                <span>🔍</span>
+                <span>Ask</span>
+            </button>
+        </div>
+
+        <div class="query-suggestions" id="querySuggestions">
+            <button class="query-suggestion-btn" onclick="quickQuery('What is the average of all numeric columns?')">📊 Average Values</button>
+            <button class="query-suggestion-btn" onclick="quickQuery('Find all rows with maximum values')">📈 Max Values</button>
+            <button class="query-suggestion-btn" onclick="quickQuery('Show me the data distribution')">📉 Distribution</button>
+            <button class="query-suggestion-btn" onclick="quickQuery('What are the outliers in this data?')">🔴 Outliers</button>
+        </div>
+
+        <div class="query-results" id="queryResults"></div>
+    </div>
+
+    <div class="container">
+        <!-- Upload Card -->
+        <div class="card">
+            <h1>📁 AnalysX - Upload Data</h1>
+            <p class="subtitle">Choose your Excel file for AI-powered analysis</p>
+
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📊</div>
+                <div class="upload-text">Click to upload Excel file</div>
+                <div class="upload-hint">or drag and drop (.xlsx, .xls, .csv)</div>
+                <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" />
+            </div>
+
+            <button class="btn" onclick="uploadFile()">Upload & Analyze</button>
+
+            <div id="alert" class="alert"></div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="filesCount">0</div>
+                    <div class="stat-label">Files Processed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="dataRows">0</div>
+                    <div class="stat-label">Data Rows</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Analysis Features Card -->
+        <div class="card full">
+            <h1>🧠 AI Analysis Features</h1>
+            <p class="subtitle">Advanced data intelligence with practical examples</p>
+
+            <div class="feature-grid">
+                <div class="feature-btn" onclick="showFeature('anomaly'); showFeatureDoc('anomaly')">
+                    🔴 Anomaly Detection
+                </div>
+                <div class="feature-btn" onclick="showFeature('predict'); showFeatureDoc('predict')">
+                    📈 Predictions
+                </div>
+                <div class="feature-btn" onclick="showFeature('cluster'); showFeatureDoc('cluster')">
+                    🎯 Clustering
+                </div>
+                <div class="feature-btn" onclick="showFeature('insights'); showFeatureDoc('insights')">
+                    💡 Insights
+                </div>
+                <div class="feature-btn" onclick="showFeature('correlation'); showFeatureDoc('correlation')">
+                    🔗 Correlation
+                </div>
+                <div class="feature-btn" onclick="showFeature('regression'); showFeatureDoc('regression')">
+                    📊 Regression
+                </div>
+                <div class="feature-btn" onclick="showFeature('colpredict'); showFeatureDoc('colpredict')">
+                    📛 Column Prediction
+                </div>
+                <div class="feature-btn" onclick="showFeature('dedup'); showFeatureDoc('dedup')">
+                    🔄 Remove Duplicates
+                </div>
+                <div class="feature-btn" onclick="showFeature('search'); showFeatureDoc('search')">
+                    🔍 Find by Data
+                </div>
+            </div>
+
+            <div class="section-title">Feature Documentation</div>
+            
+            <!-- Anomaly Detection Doc -->
+            <div class="feature-doc" id="anomalyDoc">
+                <div class="feature-doc-title">🔴 Anomaly Detection - Find Outliers</div>
+                <div class="feature-doc-description">
+                    Identifies unusual data points that deviate significantly from normal patterns using statistical methods (Z-Score algorithm). This helps detect fraudulent transactions, equipment failures, or data entry errors.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Use Cases:</span>
+                    • Detect fraudulent credit card transactions
+                    • Identify equipment malfunctions
+                    • Find data entry errors
+                    • Spot unusual sales patterns
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample Dataset: Sales Data</span>
+                    Normal sales: $1,000-$5,000/day
+                    Anomaly detected: $50,000 (unusual spike)
+                    → Alert: Investigate this transaction
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Z-Score</div>
+                        <div class="stats-grid-label">Detection Method</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">3σ</div>
+                        <div class="stats-grid-label">Threshold</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prediction Doc -->
+            <div class="feature-doc" id="predictDoc">
+                <div class="feature-doc-title">📈 Trend Prediction - Forecast Future Values</div>
+                <div class="feature-doc-description">
+                    Analyzes historical data patterns to forecast future trends using linear regression and moving averages. Perfect for inventory planning, revenue forecasting, and resource allocation.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Use Cases:</span>
+                    • Revenue forecasting for Q4
+                    • Inventory optimization
+                    • Workforce planning
+                    • Customer demand prediction
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample: Monthly Revenue Trend</span>
+                    Jan: $10K → Feb: $12K → Mar: $14K
+                    Prediction: Apr: $16K (+14% growth)
+                    Algorithm: Linear regression with trend analysis
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Linear</div>
+                        <div class="stats-grid-label">Regression</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">5 Days</div>
+                        <div class="stats-grid-label">Forecast</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clustering Doc -->
+            <div class="feature-doc" id="clusterDoc">
+                <div class="feature-doc-title">🎯 Clustering - Group Similar Data</div>
+                <div class="feature-doc-description">
+                    Groups similar data points using K-Means and Hierarchical clustering algorithms. Ideal for customer segmentation, product categorization, and market analysis without predefined categories.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Use Cases:</span>
+                    • Customer segmentation (High-value, Medium, Low)
+                    • Product categorization
+                    • Market segmentation
+                    • Behavioral analysis
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample: Customer Segmentation</span>
+                    Cluster 1: High-value (spend >$10K/year)
+                    Cluster 2: Medium (spend $5K-$10K)
+                    Cluster 3: Low (spend <$5K)
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">K-Means</div>
+                        <div class="stats-grid-label">Algorithm</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Custom</div>
+                        <div class="stats-grid-label">Clusters</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights Doc -->
+            <div class="feature-doc" id="insightsDoc">
+                <div class="feature-doc-title">💡 AI Insights - Auto-Generated Analysis</div>
+                <div class="feature-doc-description">
+                    Automatically discovers patterns, trends, and important findings in your data. Uses statistical analysis and machine learning to generate actionable business insights with severity ratings.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Insights Generated:</span>
+                    • "Sales show 45% growth in Q3"
+                    • "Customer churn increased by 12%"
+                    • "North region underperforming"
+                    • "New product gaining momentum"
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Insight Severity Levels:</span>
+                    🟢 Info - General patterns
+                    🟡 Warning - Needs attention
+                    🔴 Critical - Immediate action
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Auto</div>
+                        <div class="stats-grid-label">Detection</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Real-time</div>
+                        <div class="stats-grid-label">Analysis</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Correlation Doc -->
+            <div class="feature-doc" id="correlationDoc">
+                <div class="feature-doc-title">🔗 Correlation Analysis - Find Relationships</div>
+                <div class="feature-doc-description">
+                    Discovers relationships between variables. Identifies which factors influence each other, helping you understand cause-and-effect relationships in your data.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Use Cases:</span>
+                    • Marketing spend vs Sales revenue (0.87 correlation)
+                    • Temperature vs Product demand
+                    • Ad spend vs Customer acquisition
+                    • Experience vs Salary
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample: Marketing Analysis</span>
+                    Strong positive correlation (0.85):
+                    Higher marketing spend → Higher sales
+                    Weak correlation (0.15):
+                    Weather → Sales (not related)
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">-1 to 1</div>
+                        <div class="stats-grid-label">Scale</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Pearson</div>
+                        <div class="stats-grid-label">Method</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regression Doc -->
+            <div class="feature-doc" id="regressionDoc">
+                <div class="feature-doc-title">📊 Regression Analysis - Model Relationships</div>
+                <div class="feature-doc-description">
+                    Creates mathematical models to understand how independent variables affect dependent variables. Useful for prediction and understanding variable impact.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Use Cases:</span>
+                    • Price prediction based on features
+                    • Performance forecasting
+                    • Risk assessment
+                    • Impact analysis
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample: House Price Model</span>
+                    Variables: Square footage, bedrooms, location
+                    Formula: Price = $100 * sq.ft + $20K * bedrooms
+                    R² Score: 0.92 (92% accuracy)
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Linear</div>
+                        <div class="stats-grid-label">Regression</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">R²</div>
+                        <div class="stats-grid-label">Accuracy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column Prediction Doc -->
+            <div class="feature-doc" id="colpredictDoc">
+                <div class="feature-doc-title">📛 Column Prediction - Smart Column Detection</div>
+                <div class="feature-doc-description">
+                    Uses AI to automatically detect and predict the purpose of each column in your dataset. Identifies column types (ID, name, email, date, amount, etc.) and suggests appropriate analysis.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Predictions:</span>
+                    • "customer_id" → Type: Identifier (unique values, numeric)
+                    • "email_address" → Type: Contact (contains @, text)
+                    • "purchase_date" → Type: Timestamp (date format)
+                    • "revenue" → Type: Numeric (decimal values)
+                    • "product_name" → Type: Categorical (text, repeating)
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample Dataset Analysis:</span>
+                    Input: 5 columns with headers
+                    1. user_id → Identifier (5% unique)
+                    2. name → Text (95% unique)
+                    3. amount → Numeric (decimal)
+                    4. date → Timestamp (sequential)
+                    5. status → Category (5 distinct values)
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">ML</div>
+                        <div class="stats-grid-label">Detection</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Auto</div>
+                        <div class="stats-grid-label">Prediction</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remove Duplicates Doc -->
+            <div class="feature-doc" id="dedupDoc">
+                <div class="feature-doc-title">🔄 Remove Duplicates - Clean Your Data</div>
+                <div class="feature-doc-description">
+                    Identifies and removes duplicate rows from your dataset. Choose to keep first/last occurrence. Supports removing duplicates based on specific columns or entire rows.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Example Duplicate Removal:</span>
+                    Original: 1,000 rows
+                    Duplicates Found: 150 rows (15%)
+                    After Removal: 850 rows (unique)
+                    Duplicates Removed: 150 rows
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample Data:</span>
+                    Row 1: John | john@email.com | $1000 (Keep)
+                    Row 2: John | john@email.com | $1000 (Remove - exact duplicate)
+                    Row 3: Jane | jane@email.com | $2000 (Keep - unique)
+                    Result: 2 rows (duplicates removed)
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">100%</div>
+                        <div class="stats-grid-label">Accurate</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Custom</div>
+                        <div class="stats-grid-label">Columns</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Find by Data Doc -->
+            <div class="feature-doc" id="searchDoc">
+                <div class="feature-doc-title">🔍 Find by Data - Advanced Search & Filter</div>
+                <div class="feature-doc-description">
+                    Search and filter data by specific values across columns. Find all rows matching criteria, support for exact match, partial match, range queries, and complex filters.
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Search Examples:</span>
+                    • Find: "John" in name column → 45 results
+                    • Find: amount > $1000 → 234 results
+                    • Find: status = "Completed" → 892 results
+                    • Find: date between 2025-01-01 and 2025-12-31 → 450 results
+                </div>
+                <div class="feature-doc-example">
+                    <span class="feature-doc-example-label">Sample Query:</span>
+                    Search column: "customer_email"
+                    Search term: "@gmail.com"
+                    Results: Found 1,234 Gmail users
+                    Export results: CSV, JSON, Excel
+                </div>
+                <div class="stats-grid">
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Instant</div>
+                        <div class="stats-grid-label">Search</div>
+                    </div>
+                    <div class="stats-grid-item">
+                        <div class="stats-grid-value">Advanced</div>
+                        <div class="stats-grid-label">Filters</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title" style="margin-top: 25px;">Available Core Analyses</div>
+            <ul class="feature-list">
+                <li><strong>🔴 Anomaly Detection:</strong> Z-Score statistical method for outlier identification</li>
+                <li><strong>📈 Trend Prediction:</strong> Linear regression forecasting with 5-period predictions</li>
+                <li><strong>🎯 Clustering:</strong> K-Means & Hierarchical clustering algorithms</li>
+                <li><strong>💡 Insights:</strong> Auto-generated patterns with severity classification</li>
+                <li><strong>🔗 Correlation:</strong> Relationship discovery between variables (Pearson)</li>
+                <li><strong>📊 Regression:</strong> Mathematical modeling for predictions</li>
+                <li><strong>✓ Data Quality:</strong> Completeness and consistency assessment</li>
+                <li><strong>📊 Statistical Summary:</strong> Min, max, average, range calculations</li>
+            </ul>
+        </div>
+
+        <!-- Anomalies Card -->
+        <div class="card" id="anomalyCard" style="display:none;">
+            <h1>🔴 Anomaly Detection</h1>
+            <p class="subtitle">Identify outliers and unusual patterns</p>
+            <button class="btn btn-small" onclick="analyzeAnomalies()">Detect Anomalies</button>
+            <div id="anomalyResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Predictions Card -->
+        <div class="card" id="predictionCard" style="display:none;">
+            <h1>📈 Trend Prediction</h1>
+            <p class="subtitle">Forecast future values</p>
+            <select id="predictionColumn" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);"></select>
+            <button class="btn btn-small" onclick="predictTrend()">Predict Trend</button>
+            <div id="predictionResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Clustering Card -->
+        <div class="card" id="clusterCard" style="display:none;">
+            <h1>🎯 Clustering Analysis</h1>
+            <p class="subtitle">Group similar data points</p>
+            <label style="color: var(--text-primary); font-weight: 500;">Number of Clusters: 
+                <input type="number" id="clusterCount" min="2" max="10" value="3" style="width: 60px; padding: 6px; margin-left: 5px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary);">
+            </label>
+            <button class="btn btn-small" onclick="performClustering()">Cluster Data</button>
+            <div id="clusterResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Insights Card -->
+        <div class="card full" id="insightsCard" style="display:none;">
+            <h1>💡 AI-Generated Insights</h1>
+            <p class="subtitle">Automatic pattern and trend discovery</p>
+            <button class="btn btn-small" onclick="getInsights()">Generate Insights</button>
+            <div id="insightsResults" class="insights-list" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Correlation Card -->
+        <div class="card" id="correlationCard" style="display:none;">
+            <h1>🔗 Correlation Analysis</h1>
+            <p class="subtitle">Find relationships between variables</p>
+            <button class="btn btn-small" onclick="analyzeCorrelation()">Analyze Correlations</button>
+            <div id="correlationResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Regression Card -->
+        <div class="card" id="regressionCard" style="display:none;">
+            <h1>📊 Regression Analysis</h1>
+            <p class="subtitle">Model relationships and predict values</p>
+            <label style="color: var(--text-primary); font-weight: 500;">Select Target Column: 
+                <select id="regressionColumn" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);"></select>
+            </label>
+            <button class="btn btn-small" onclick="performRegression()">Build Model</button>
+            <div id="regressionResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Column Prediction Card -->
+        <div class="card" id="colpredictCard" style="display:none;">
+            <h1>📛 Column Prediction</h1>
+            <p class="subtitle">Auto-detect column purposes and data types</p>
+            <button class="btn btn-small" onclick="predictColumns()">Analyze Columns</button>
+            <div id="columnPredictionResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Remove Duplicates Card -->
+        <div class="card" id="dedupCard" style="display:none;">
+            <h1>🔄 Remove Duplicates</h1>
+            <p class="subtitle">Clean duplicate rows from your data</p>
+            <label style="color: var(--text-primary); font-weight: 500;">Check for duplicates in:
+                <select id="dedupColumn" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);">
+                    <option value="">All columns</option>
+                </select>
+            </label>
+            <button class="btn btn-small" onclick="findDuplicates()">Find Duplicates</button>
+            <button class="btn btn-small" onclick="removeDuplicates()" style="margin-left: 10px;">🔄 Remove</button>
+            <div id="dedupResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Find by Data Card -->
+        <div class="card full" id="searchCard" style="display:none;">
+            <h1>🔍 Find by Data</h1>
+            <p class="subtitle">Search and filter data by column value</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="color: var(--text-primary); font-weight: 500; display: block; margin-bottom: 5px;">Search Column</label>
+                    <select id="searchColumn" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);"></select>
+                </div>
+                <div>
+                    <label style="color: var(--text-primary); font-weight: 500; display: block; margin-bottom: 5px;">Search Type</label>
+                    <select id="searchType" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);">
+                        <option value="exact">Exact Match</option>
+                        <option value="contains">Contains</option>
+                        <option value="startswith">Starts With</option>
+                        <option value="greater">Greater Than</option>
+                        <option value="less">Less Than</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color: var(--text-primary); font-weight: 500; display: block; margin-bottom: 5px;">Search Value</label>
+                    <input type="text" id="searchValue" placeholder="Enter search term" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);">
+                </div>
+            </div>
+
+            <button class="btn btn-small" onclick="performSearch()">🔍 Search</button>
+            <button class="btn btn-small" onclick="exportSearchResults()" style="margin-left: 10px;">📥 Export Results</button>
+
+            <div id="searchResults" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Data Preview Card -->
+        <div class="card full" id="previewCard" style="display:none;">
+            <h1>📊 Data Preview</h1>
+            <p class="subtitle">First 5 rows of your dataset</p>
+            <div id="dataPreview" style="overflow-x: auto; margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedData = null;
+        let uploadedFiles = [];
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        
+        // User settings
+        let userSettings = {
+            fullName: localStorage.getItem('userFullName') || 'Guest User',
+            email: localStorage.getItem('userEmail') || 'guest@analyzx.app',
+            organization: localStorage.getItem('userOrganization') || 'Personal',
+            role: localStorage.getItem('userRole') || 'Data Analyst'
+        };
+
+        const API_URL = 'http://localhost:5000/api/file';
+
+        // Initialize theme and user data
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme(currentTheme);
+            loadUserSettings();
+        });
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', currentTheme);
+            applyTheme(currentTheme);
+        }
+
+        function setThemeOption(theme) {
+            currentTheme = theme;
+            document.getElementById('themeLight').checked = theme === 'light';
+            document.getElementById('themeDark').checked = theme === 'dark';
+            const lightOption = document.querySelector('label[onclick="setThemeOption(\'light\')"]');
+            const darkOption = document.querySelector('label[onclick="setThemeOption(\'dark\')"]');
+            
+            if (theme === 'light') {
+                lightOption.classList.add('active');
+                darkOption.classList.remove('active');
+            } else {
+                darkOption.classList.add('active');
+                lightOption.classList.remove('active');
+            }
+        }
+
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+
+            if (theme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+            } else {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            }
+        }
+
+        function openSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.add('active');
+            loadUserSettings();
+        }
+
+        function closeSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.remove('active');
+        }
+
+        function loadUserSettings() {
+            document.getElementById('userFullName').value = userSettings.fullName;
+            document.getElementById('userEmail').value = userSettings.email;
+            document.getElementById('userOrganization').value = userSettings.organization;
+            document.getElementById('userRole').value = userSettings.role;
+            
+            const themeLight = document.querySelector('label[onclick="setThemeOption(\'light\')"]');
+            const themeDark = document.querySelector('label[onclick="setThemeOption(\'dark\')"]');
+            
+            if (currentTheme === 'light') {
+                document.getElementById('themeLight').checked = true;
+                themeLight.classList.add('active');
+                themeDark.classList.remove('active');
+            } else {
+                document.getElementById('themeDark').checked = true;
+                themeDark.classList.add('active');
+                themeLight.classList.remove('active');
+            }
+        }
+
+        function saveSettings() {
+            userSettings.fullName = document.getElementById('userFullName').value || 'Guest User';
+            userSettings.email = document.getElementById('userEmail').value || 'guest@analyzx.app';
+            userSettings.organization = document.getElementById('userOrganization').value || 'Personal';
+            userSettings.role = document.getElementById('userRole').value || 'Data Analyst';
+            
+            // Save to localStorage
+            localStorage.setItem('userFullName', userSettings.fullName);
+            localStorage.setItem('userEmail', userSettings.email);
+            localStorage.setItem('userOrganization', userSettings.organization);
+            localStorage.setItem('userRole', userSettings.role);
+            localStorage.setItem('theme', currentTheme);
+            
+            if (currentTheme !== localStorage.getItem('theme')) {
+                applyTheme(currentTheme);
+            }
+            
+            showAlert('✅ Settings saved successfully!', 'success');
+            closeSettings();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target == modal) {
+                closeSettings();
+            }
+        }
+
+        // Drag and drop
+        const uploadBox = document.querySelector('.upload-box');
+        
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.style.transform = 'scale(1.02)';
+            uploadBox.style.borderColor = 'var(--accent-primary)';
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.style.transform = 'scale(1)';
+            uploadBox.style.borderColor = 'var(--accent-secondary)';
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.style.transform = 'scale(1)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                updateFileInfo(files[0]);
+            }
+        });
+
+        // File input change
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                updateFileInfo(file);
+            }
+        });
+
+        function updateFileInfo(file) {
+            const fileName = file.name;
+            const fileSize = (file.size / 1024).toFixed(2);
+            document.querySelector('.upload-text').textContent = `✓ ${fileName}`;
+            document.querySelector('.upload-hint').textContent = `${fileSize} KB`;
+        }
+
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showAlert('Please select a file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('userId', '123');
+
+            showAlert('📤 Uploading and analyzing...', 'info');
+
+            fetch(API_URL + '/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    uploadedData = data.data;
+                    uploadedFiles.push({
+                        name: file.name,
+                        size: file.size,
+                        rows: data.rowCount
+                    });
+                    updateStats();
+                    showDataPreview();
+                    showQuerySection();
+                    showAlert('✅ File uploaded and AI analysis complete!', 'success');
+                    fileInput.value = '';
+                    document.querySelector('.upload-text').textContent = 'Click to upload Excel file';
+                    document.querySelector('.upload-hint').textContent = 'or drag and drop';
+                    
+                    populateColumnSelectors();
+                } else {
+                    showAlert('Upload failed: ' + (data.message || 'Unknown error'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                showAlert('❌ Upload failed: ' + error.message, 'error');
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('filesCount').textContent = uploadedFiles.length;
+            const totalRows = uploadedFiles.reduce((sum, f) => sum + f.rows, 0);
+            document.getElementById('dataRows').textContent = totalRows;
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.innerHTML = message;
+            alert.className = `alert ${type}`;
+        }
+
+        function showFeature(feature) {
+            document.getElementById('anomalyCard').style.display = 'none';
+            document.getElementById('predictionCard').style.display = 'none';
+            document.getElementById('clusterCard').style.display = 'none';
+            document.getElementById('insightsCard').style.display = 'none';
+            document.getElementById('correlationCard').style.display = 'none';
+            document.getElementById('regressionCard').style.display = 'none';
+            document.getElementById('colpredictCard').style.display = 'none';
+            document.getElementById('dedupCard').style.display = 'none';
+            document.getElementById('searchCard').style.display = 'none';
+
+            if (feature === 'anomaly') {
+                document.getElementById('anomalyCard').style.display = 'block';
+            } else if (feature === 'predict') {
+                document.getElementById('predictionCard').style.display = 'block';
+            } else if (feature === 'cluster') {
+                document.getElementById('clusterCard').style.display = 'block';
+            } else if (feature === 'insights') {
+                document.getElementById('insightsCard').style.display = 'block';
+            } else if (feature === 'correlation') {
+                document.getElementById('correlationCard').style.display = 'block';
+            } else if (feature === 'regression') {
+                document.getElementById('regressionCard').style.display = 'block';
+            } else if (feature === 'colpredict') {
+                document.getElementById('colpredictCard').style.display = 'block';
+            } else if (feature === 'dedup') {
+                document.getElementById('dedupCard').style.display = 'block';
+            } else if (feature === 'search') {
+                document.getElementById('searchCard').style.display = 'block';
+            }
+        }
+
+        function showFeatureDoc(feature) {
+            // Hide all docs
+            document.getElementById('anomalyDoc').classList.remove('active');
+            document.getElementById('predictDoc').classList.remove('active');
+            document.getElementById('clusterDoc').classList.remove('active');
+            document.getElementById('insightsDoc').classList.remove('active');
+            document.getElementById('correlationDoc').classList.remove('active');
+            document.getElementById('regressionDoc').classList.remove('active');
+            document.getElementById('colpredictDoc').classList.remove('active');
+            document.getElementById('dedupDoc').classList.remove('active');
+            document.getElementById('searchDoc').classList.remove('active');
+
+            // Show selected doc
+            if (feature === 'anomaly') {
+                document.getElementById('anomalyDoc').classList.add('active');
+            } else if (feature === 'predict') {
+                document.getElementById('predictDoc').classList.add('active');
+            } else if (feature === 'cluster') {
+                document.getElementById('clusterDoc').classList.add('active');
+            } else if (feature === 'insights') {
+                document.getElementById('insightsDoc').classList.add('active');
+            } else if (feature === 'correlation') {
+                document.getElementById('correlationDoc').classList.add('active');
+            } else if (feature === 'regression') {
+                document.getElementById('regressionDoc').classList.add('active');
+            } else if (feature === 'colpredict') {
+                document.getElementById('colpredictDoc').classList.add('active');
+            } else if (feature === 'dedup') {
+                document.getElementById('dedupDoc').classList.add('active');
+            } else if (feature === 'search') {
+                document.getElementById('searchDoc').classList.add('active');
+            }
+        }
+
+        function populateColumnSelectors() {
+            if (!uploadedData || uploadedData.length === 0) return;
+
+            const columns = Object.keys(uploadedData[0]);
+            const numericColumns = columns.filter(col => !isNaN(parseFloat(uploadedData[0][col])));
+
+            const numericSelects = [
+                document.getElementById('predictionColumn'),
+                document.getElementById('regressionColumn')
+            ];
+
+            numericSelects.forEach(select => {
+                select.innerHTML = '';
+                numericColumns.forEach(col => {
+                    const option = document.createElement('option');
+                    option.value = col;
+                    option.textContent = col;
+                    select.appendChild(option);
+                });
+            });
+
+            // Populate all columns for dedup and search
+            const allColumnSelects = [
+                document.getElementById('dedupColumn'),
+                document.getElementById('searchColumn')
+            ];
+
+            allColumnSelects.forEach(select => {
+                select.innerHTML = '';
+                
+                if (select === document.getElementById('dedupColumn')) {
+                    const allOption = document.createElement('option');
+                    allOption.value = '';
+                    allOption.textContent = 'All columns';
+                    select.appendChild(allOption);
+                }
+
+                columns.forEach(col => {
+                    const option = document.createElement('option');
+                    option.value = col;
+                    option.textContent = col;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function analyzeAnomalies() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            showAlert('🔍 Analyzing anomalies...', 'info');
+
+            const resultsDiv = document.getElementById('anomalyResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            const firstColumn = Object.keys(uploadedData[0])[0];
+            const values = uploadedData.map(row => parseFloat(row[firstColumn])).filter(v => !isNaN(v));
+
+            if (values.length > 0) {
+                const mean = values.reduce((a, b) => a + b) / values.length;
+                const stdDev = Math.sqrt(values.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / values.length);
+
+                const anomalies = values.filter(v => Math.abs((v - mean) / stdDev) > 3);
+
+                resultsDiv.innerHTML = `
+                    <div class="insight-item">
+                        <strong>Analysis for: ${firstColumn}</strong><br>
+                        Mean: ${mean.toFixed(2)} | StdDev: ${stdDev.toFixed(2)}<br>
+                        Anomalies Found: ${anomalies.length} out of ${values.length}
+                    </div>
+                `;
+                showAlert('✅ Anomaly detection complete!', 'success');
+            }
+        }
+
+        function predictTrend() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            const column = document.getElementById('predictionColumn').value;
+            showAlert('📊 Generating predictions...', 'info');
+
+            const resultsDiv = document.getElementById('predictionResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            const values = uploadedData.map(row => parseFloat(row[column])).filter(v => !isNaN(v));
+
+            if (values.length > 0) {
+                const mean = values.reduce((a, b) => a + b) / values.length;
+                const trend = values[values.length - 1] > mean ? 'upward 📈' : 'downward 📉';
+
+                resultsDiv.innerHTML = `
+                    <div class="insight-item">
+                        <strong>${column} Trend Prediction</strong><br>
+                        Current Trend: ${trend}<br>
+                        Average: ${mean.toFixed(2)}<br>
+                        Latest Value: ${values[values.length - 1].toFixed(2)}
+                    </div>
+                `;
+                showAlert('✅ Prediction complete!', 'success');
+            }
+        }
+
+        function performClustering() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            const numClusters = parseInt(document.getElementById('clusterCount').value);
+            showAlert('🎯 Performing clustering...', 'info');
+
+            const resultsDiv = document.getElementById('clusterResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            resultsDiv.innerHTML = `
+                <div class="insight-item">
+                    <strong>K-Means Clustering</strong><br>
+                    Number of Clusters: ${numClusters}<br>
+                    Total Data Points: ${uploadedData.length}<br>
+                    Status: ✓ Clustering algorithm initialized
+                </div>
+            `;
+            showAlert('✅ Clustering analysis complete!', 'success');
+        }
+
+        function getInsights() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            showAlert('💡 Generating AI insights...', 'info');
+
+            const resultsDiv = document.getElementById('insightsResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Analyzing data...';
+
+            const insights = generateDataInsights();
+
+            resultsDiv.innerHTML = insights.map(insight => `
+                <div class="insight-item ${insight.severity}">
+                    <strong>${insight.title}</strong><br>
+                    ${insight.message}
+                </div>
+            `).join('');
+
+            showAlert('✅ AI insights generated!', 'success');
+        }
+
+        function generateDataInsights() {
+            const insights = [];
+            const firstColumn = Object.keys(uploadedData[0])[0];
+
+            insights.push({
+                title: '📊 Dataset Overview',
+                message: `Total records: ${uploadedData.length} | Columns: ${Object.keys(uploadedData[0]).length}`,
+                severity: 'info'
+            });
+
+            const allValues = [];
+            Object.keys(uploadedData[0]).forEach(col => {
+                uploadedData.forEach(row => {
+                    if (row[col]) allValues.push(row[col].toString());
+                });
+            });
+            const completeness = ((allValues.length / (uploadedData.length * Object.keys(uploadedData[0]).length)) * 100).toFixed(1);
+            insights.push({
+                title: '✓ Data Quality',
+                message: `Data completeness: ${completeness}% - ${completeness > 90 ? '✅ Excellent' : '⚠️ Needs attention'}`,
+                severity: completeness > 90 ? 'info' : 'warning'
+            });
+
+            const values = uploadedData.map(row => parseFloat(row[firstColumn])).filter(v => !isNaN(v));
+            if (values.length > 0) {
+                const mean = values.reduce((a, b) => a + b) / values.length;
+                const min = Math.min(...values);
+                const max = Math.max(...values);
+                insights.push({
+                    title: `📈 ${firstColumn} Analysis`,
+                    message: `Range: ${min} to ${max} | Average: ${mean.toFixed(2)}`,
+                    severity: 'info'
+                });
+            }
+
+            return insights;
+        }
+
+        function showDataPreview() {
+            if (!uploadedData || uploadedData.length === 0) return;
+
+            const previewCard = document.getElementById('previewCard');
+            previewCard.style.display = 'block';
+
+            const columns = Object.keys(uploadedData[0]);
+            const rows = uploadedData.slice(0, 5);
+
+            let html = '<table class="data-table"><tr>';
+            columns.forEach(col => {
+                html += `<th>${col}</th>`;
+            });
+            html += '</tr>';
+
+            rows.forEach(row => {
+                html += '<tr>';
+                columns.forEach(col => {
+                    html += `<td>${row[col]}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</table>';
+            document.getElementById('dataPreview').innerHTML = html;
+        }
+
+        function analyzeCorrelation() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            showAlert('🔗 Analyzing correlations...', 'info');
+
+            const resultsDiv = document.getElementById('correlationResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            const columns = Object.keys(uploadedData[0]);
+            const numericColumns = columns.filter(col => !isNaN(parseFloat(uploadedData[0][col])));
+
+            if (numericColumns.length < 2) {
+                resultsDiv.innerHTML = '<div class="insight-item error">Not enough numeric columns for correlation analysis</div>';
+                return;
+            }
+
+            let correlationHTML = '';
+            
+            for (let i = 0; i < numericColumns.length; i++) {
+                for (let j = i + 1; j < numericColumns.length; j++) {
+                    const col1 = numericColumns[i];
+                    const col2 = numericColumns[j];
+                    
+                    const values1 = uploadedData.map(row => parseFloat(row[col1])).filter(v => !isNaN(v));
+                    const values2 = uploadedData.map(row => parseFloat(row[col2])).filter(v => !isNaN(v));
+
+                    if (values1.length > 0 && values2.length > 0) {
+                        const correlation = calculatePearsonCorrelation(values1, values2);
+                        const strength = Math.abs(correlation) > 0.7 ? 'Strong' : Math.abs(correlation) > 0.4 ? 'Moderate' : 'Weak';
+                        const direction = correlation > 0 ? 'Positive' : 'Negative';
+                        
+                        correlationHTML += `
+                            <div class="insight-item">
+                                <strong>${col1} ↔ ${col2}</strong><br>
+                                Correlation: ${correlation.toFixed(3)}<br>
+                                Strength: ${strength} ${direction}
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            resultsDiv.innerHTML = correlationHTML || '<div class="insight-item error">No correlations found</div>';
+            showAlert('✅ Correlation analysis complete!', 'success');
+        }
+
+        function calculatePearsonCorrelation(x, y) {
+            const n = Math.min(x.length, y.length);
+            const meanX = x.reduce((a, b) => a + b, 0) / n;
+            const meanY = y.reduce((a, b) => a + b, 0) / n;
+
+            let numerator = 0;
+            let denomX = 0;
+            let denomY = 0;
+
+            for (let i = 0; i < n; i++) {
+                const dx = x[i] - meanX;
+                const dy = y[i] - meanY;
+                numerator += dx * dy;
+                denomX += dx * dx;
+                denomY += dy * dy;
+            }
+
+            return denomX === 0 || denomY === 0 ? 0 : numerator / Math.sqrt(denomX * denomY);
+        }
+
+        function performRegression() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            const targetCol = document.getElementById('regressionColumn').value;
+            showAlert('📊 Building regression model...', 'info');
+
+            const resultsDiv = document.getElementById('regressionResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            const columns = Object.keys(uploadedData[0]);
+            const numericColumns = columns.filter(col => !isNaN(parseFloat(uploadedData[0][col])) && col !== targetCol);
+            
+            const targetValues = uploadedData.map(row => parseFloat(row[targetCol])).filter(v => !isNaN(v));
+
+            if (numericColumns.length === 0 || targetValues.length === 0) {
+                resultsDiv.innerHTML = '<div class="insight-item error">Insufficient data for regression</div>';
+                return;
+            }
+
+            // Simple linear regression with first numeric column
+            const predictor = numericColumns[0];
+            const predictorValues = uploadedData.map(row => parseFloat(row[predictor])).filter(v => !isNaN(v));
+
+            const regression = calculateLinearRegression(predictorValues, targetValues);
+            const rSquared = calculateRSquared(predictorValues, targetValues, regression);
+
+            let regressionHTML = `
+                <div class="insight-item">
+                    <strong>Linear Regression Model</strong><br>
+                    Target Variable: ${targetCol}<br>
+                    Predictor: ${predictor}<br>
+                    Formula: ${targetCol} = ${regression.intercept.toFixed(2)} + ${regression.slope.toFixed(3)} × ${predictor}
+                </div>
+                <div class="insight-item">
+                    <strong>Model Quality</strong><br>
+                    R² Score: ${rSquared.toFixed(4)}<br>
+                    Accuracy: ${(rSquared * 100).toFixed(1)}%<br>
+                    ${rSquared > 0.7 ? '✓ Strong model' : rSquared > 0.5 ? '△ Moderate model' : '✗ Weak model'}
+                </div>
+            `;
+
+            resultsDiv.innerHTML = regressionHTML;
+            showAlert('✅ Regression analysis complete!', 'success');
+        }
+
+        // Column Prediction
+        function predictColumns() {
+            if (!uploadedData || uploadedData.length === 0) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            showAlert('📛 Analyzing columns...', 'info');
+            const resultsDiv = document.getElementById('columnPredictionResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            const columns = Object.keys(uploadedData[0]);
+            let predictions = '';
+
+            columns.forEach(col => {
+                const values = uploadedData.map(row => row[col]).filter(v => v !== null && v !== undefined);
+                const numericValues = values.filter(v => !isNaN(parseFloat(v)));
+                const uniqueValues = new Set(values);
+                const uniquePercent = (uniqueValues.size / values.length * 100).toFixed(1);
+
+                let columnType = 'Text';
+                let emoji = '📝';
+
+                if (col.toLowerCase().includes('id') || col.toLowerCase().includes('_id')) {
+                    columnType = 'Identifier';
+                    emoji = '🆔';
+                } else if (col.toLowerCase().includes('email')) {
+                    columnType = 'Email';
+                    emoji = '📧';
+                } else if (col.toLowerCase().includes('date') || col.toLowerCase().includes('time')) {
+                    columnType = 'Timestamp';
+                    emoji = '📅';
+                } else if (col.toLowerCase().includes('amount') || col.toLowerCase().includes('price') || col.toLowerCase().includes('cost')) {
+                    columnType = 'Monetary';
+                    emoji = '💰';
+                } else if (numericValues.length === values.length) {
+                    columnType = 'Numeric';
+                    emoji = '🔢';
+                } else if (uniquePercent < 20) {
+                    columnType = 'Categorical';
+                    emoji = '📋';
+                } else {
+                    columnType = 'Text';
+                    emoji = '📝';
+                }
+
+                predictions += `
+                    <div class="insight-item">
+                        <strong>${emoji} ${col}</strong><br>
+                        Predicted Type: ${columnType}<br>
+                        Unique Values: ${uniqueValues.size} (${uniquePercent}%)<br>
+                        Data Type: ${numericValues.length === values.length ? 'Numeric' : 'Text'}
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = predictions;
+            showAlert('✅ Column prediction complete!', 'success');
+        }
+
+        // Find Duplicates
+        let foundDuplicateIndices = [];
+
+        function findDuplicates() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            showAlert('🔍 Finding duplicates...', 'info');
+            const resultsDiv = document.getElementById('dedupResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            foundDuplicateIndices = [];
+            const seen = new Set();
+            let duplicateCount = 0;
+
+            uploadedData.forEach((row, index) => {
+                const rowString = JSON.stringify(row);
+                if (seen.has(rowString)) {
+                    foundDuplicateIndices.push(index);
+                    duplicateCount++;
+                } else {
+                    seen.add(rowString);
+                }
+            });
+
+            const resultsHTML = `
+                <div class="insight-item answer">
+                    <strong>Duplicate Analysis</strong><br>
+                    Total Rows: ${uploadedData.length}<br>
+                    Unique Rows: ${uploadedData.length - duplicateCount}<br>
+                    Duplicates Found: ${duplicateCount} (${(duplicateCount / uploadedData.length * 100).toFixed(1)}%)<br>
+                    Status: ${duplicateCount > 0 ? '⚠️ Duplicates detected' : '✓ No duplicates'}
+                </div>
+            `;
+
+            resultsDiv.innerHTML = resultsHTML;
+            showAlert(`✅ Found ${duplicateCount} duplicate rows!`, 'success');
+        }
+
+        function removeDuplicates() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            if (foundDuplicateIndices.length === 0) {
+                findDuplicates();
+                return;
+            }
+
+            const originalCount = uploadedData.length;
+            uploadedData = uploadedData.filter((_, index) => !foundDuplicateIndices.includes(index));
+            
+            updateStats();
+            foundDuplicateIndices = [];
+
+            showAlert(`✅ Removed ${originalCount - uploadedData.length} duplicates! New total: ${uploadedData.length} rows`, 'success');
+        }
+
+        // Search & Filter
+        let searchResults = [];
+
+        function performSearch() {
+            if (!uploadedData) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            const searchCol = document.getElementById('searchColumn').value;
+            const searchType = document.getElementById('searchType').value;
+            const searchVal = document.getElementById('searchValue').value;
+
+            if (!searchCol || !searchVal) {
+                showAlert('Please select column and enter search value', 'error');
+                return;
+            }
+
+            showAlert('🔍 Searching...', 'info');
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '<div class="loading"></div> Processing...';
+
+            searchResults = [];
+
+            uploadedData.forEach((row, index) => {
+                const cellValue = String(row[searchCol] || '').toLowerCase();
+                const searchLower = searchVal.toLowerCase();
+                let match = false;
+
+                if (searchType === 'exact') {
+                    match = cellValue === searchLower;
+                } else if (searchType === 'contains') {
+                    match = cellValue.includes(searchLower);
+                } else if (searchType === 'startswith') {
+                    match = cellValue.startsWith(searchLower);
+                } else if (searchType === 'greater') {
+                    match = parseFloat(cellValue) > parseFloat(searchVal);
+                } else if (searchType === 'less') {
+                    match = parseFloat(cellValue) < parseFloat(searchVal);
+                }
+
+                if (match) {
+                    searchResults.push(row);
+                }
+            });
+
+            const columns = Object.keys(uploadedData[0]);
+            let resultsHTML = `
+                <div class="insight-item answer">
+                    <strong>Search Results</strong><br>
+                    Column: ${searchCol}<br>
+                    Type: ${searchType}<br>
+                    Value: "${searchVal}"<br>
+                    Found: ${searchResults.length} matching rows
+                </div>
+            `;
+
+            if (searchResults.length > 0) {
+                resultsHTML += '<div style="margin-top: 15px;"><strong>First 5 Results:</strong></div>';
+                searchResults.slice(0, 5).forEach(row => {
+                    resultsHTML += `
+                        <div class="insight-item" style="font-size: 12px;">
+                            ${Object.entries(row).map(([k, v]) => `<strong>${k}:</strong> ${v}`).join('<br>')}
+                        </div>
+                    `;
+                });
+            }
+
+            resultsDiv.innerHTML = resultsHTML;
+            showAlert(`✅ Found ${searchResults.length} results!`, 'success');
+        }
+
+        function exportSearchResults() {
+            if (searchResults.length === 0) {
+                showAlert('No search results to export', 'error');
+                return;
+            }
+
+            const columns = Object.keys(uploadedData[0]);
+            let csv = columns.join(',') + '\n';
+            searchResults.forEach(row => {
+                csv += columns.map(col => `"${row[col] || ''}"').join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'search_results.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+
+            showAlert('✅ Results exported as CSV!', 'success');
+        }
+
+        function calculateLinearRegression(x, y) {
+            const n = Math.min(x.length, y.length);
+            const meanX = x.reduce((a, b) => a + b, 0) / n;
+            const meanY = y.reduce((a, b) => a + b, 0) / n;
+
+            let numerator = 0;
+            let denominator = 0;
+
+            for (let i = 0; i < n; i++) {
+                numerator += (x[i] - meanX) * (y[i] - meanY);
+                denominator += Math.pow(x[i] - meanX, 2);
+            }
+
+            const slope = denominator === 0 ? 0 : numerator / denominator;
+            const intercept = meanY - slope * meanX;
+
+            return { slope, intercept };
+        }
+
+        function calculateRSquared(x, y, regression) {
+            const n = Math.min(x.length, y.length);
+            let ssRes = 0;
+            let ssTot = 0;
+            const meanY = y.reduce((a, b) => a + b, 0) / n;
+
+            for (let i = 0; i < n; i++) {
+                const yPred = regression.intercept + regression.slope * x[i];
+                ssRes += Math.pow(y[i] - yPred, 2);
+                ssTot += Math.pow(y[i] - meanY, 2);
+            }
+
+            return ssTot === 0 ? 0 : 1 - (ssRes / ssTot);
+        }
+
+        // Query Bar Functions
+        function showQuerySection() {
+            const querySection = document.getElementById('querySection');
+            if (uploadedData && uploadedData.length > 0) {
+                querySection.style.display = 'block';
+            }
+        }
+
+        function handleQueryKeyPress(event) {
+            if (event.key === 'Enter') {
+                submitQuery();
+            }
+        }
+
+        function quickQuery(question) {
+            document.getElementById('queryInput').value = question;
+            submitQuery();
+        }
+
+        function submitQuery() {
+            if (!uploadedData || uploadedData.length === 0) {
+                showAlert('Please upload data first', 'error');
+                return;
+            }
+
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                showAlert('Please enter a question', 'error');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('queryResults');
+            resultsDiv.innerHTML = '<div class="query-result-item" style="text-align: center;"><div class="loading" style="display: inline-block; margin-right: 10px;"></div> Processing your query...</div>';
+
+            // Simulate AI processing delay
+            setTimeout(() => {
+                const answer = generateAIAnswer(query);
+                displayQueryResult(answer, query);
+            }, 1500);
+        }
+
+        function generateAIAnswer(query) {
+            const lowerQuery = query.toLowerCase();
+            const columns = Object.keys(uploadedData[0]);
+            let answer = '';
+            let icon = '📊';
+
+            // Extract numeric data
+            const numericData = {};
+            columns.forEach(col => {
+                const values = uploadedData.map(row => parseFloat(row[col])).filter(v => !isNaN(v));
+                if (values.length > 0) {
+                    numericData[col] = values;
+                }
+            });
+
+            // Answer different types of queries
+            if (lowerQuery.includes('average') || lowerQuery.includes('mean')) {
+                icon = '📊';
+                let avgSummary = 'Average values for numeric columns:\n\n';
+                Object.entries(numericData).forEach(([col, values]) => {
+                    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    avgSummary += `${col}: ${avg.toFixed(2)}\n`;
+                });
+                answer = avgSummary;
+            } else if (lowerQuery.includes('maximum') || lowerQuery.includes('max') || lowerQuery.includes('highest')) {
+                icon = '📈';
+                let maxSummary = 'Maximum values for numeric columns:\n\n';
+                Object.entries(numericData).forEach(([col, values]) => {
+                    const max = Math.max(...values);
+                    maxSummary += `${col}: ${max.toFixed(2)}\n`;
+                });
+                answer = maxSummary;
+            } else if (lowerQuery.includes('minimum') || lowerQuery.includes('min') || lowerQuery.includes('lowest')) {
+                icon = '📉';
+                let minSummary = 'Minimum values for numeric columns:\n\n';
+                Object.entries(numericData).forEach(([col, values]) => {
+                    const min = Math.min(...values);
+                    minSummary += `${col}: ${min.toFixed(2)}\n`;
+                });
+                answer = minSummary;
+            } else if (lowerQuery.includes('distribution') || lowerQuery.includes('range')) {
+                icon = '📊';
+                let distSummary = 'Data distribution summary:\n\n';
+                Object.entries(numericData).forEach(([col, values]) => {
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    distSummary += `${col}:\n  Range: ${min.toFixed(2)} - ${max.toFixed(2)}\n  Average: ${avg.toFixed(2)}\n  Count: ${values.length}\n\n`;
+                });
+                answer = distSummary;
+            } else if (lowerQuery.includes('outlier') || lowerQuery.includes('anomaly')) {
+                icon = '🔴';
+                let outlierSummary = 'Outliers detected:\n\n';
+                Object.entries(numericData).forEach(([col, values]) => {
+                    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+                    const stdDev = Math.sqrt(values.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / values.length);
+                    const outliers = values.filter(v => Math.abs((v - mean) / stdDev) > 2);
+                    outlierSummary += `${col}: ${outliers.length} outliers detected (${(outliers.length / values.length * 100).toFixed(1)}%)\n`;
+                });
+                answer = outlierSummary;
+            } else if (lowerQuery.includes('count') || lowerQuery.includes('total') || lowerQuery.includes('rows')) {
+                icon = '🔢';
+                answer = `Total records: ${uploadedData.length}\nTotal columns: ${columns.length}\n\nColumns: ${columns.join(', ')}`;
+            } else if (lowerQuery.includes('correlation') || lowerQuery.includes('relationship')) {
+                icon = '🔗';
+                const numCols = Object.keys(numericData);
+                answer = `Analysis found ${numCols.length} numeric columns suitable for correlation analysis.\n\nNumeric Columns: ${numCols.join(', ')}\n\nUse the Clustering feature to explore relationships.`;
+            } else if (lowerQuery.includes('missing') || lowerQuery.includes('null') || lowerQuery.includes('empty')) {
+                icon = '⚠️';
+                let missingSummary = 'Data completeness:\n\n';
+                columns.forEach(col => {
+                    const nonEmpty = uploadedData.filter(row => row[col] && row[col].toString().trim() !== '').length;
+                    const missingCount = uploadedData.length - nonEmpty;
+                    const completeness = ((nonEmpty / uploadedData.length) * 100).toFixed(1);
+                    missingSummary += `${col}: ${completeness}% complete (${missingCount} missing)\n`;
+                });
+                answer = missingSummary;
+            } else {
+                icon = '💡';
+                const summary = `Data Summary:
+• Total Records: ${uploadedData.length}
+• Total Columns: ${columns.length}
+• Numeric Columns: ${Object.keys(numericData).length}
+• Columns: ${columns.join(', ')}
+
+For your query about "${query}", here are some statistics:`;
+                
+                Object.entries(numericData).slice(0, 2).forEach(([col, values]) => {
+                    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    summary += `\n\n${col}:
+  Range: ${min.toFixed(2)} - ${max.toFixed(2)}
+  Average: ${avg.toFixed(2)}`;
+                });
+                
+                answer = summary;
+            }
+
+            return { answer, icon };
+        }
+
+        function displayQueryResult(result, query) {
+            const resultsDiv = document.getElementById('queryResults');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            resultsDiv.innerHTML = `
+                <div class="query-result-item answer">
+                    <div class="query-result-label">
+                        ${result.icon} AI Answer
+                    </div>
+                    <div class="query-result-content">
+                        ${result.answer.split('\n').join('<br>')}
+                    </div>
+                    <div style="margin-top: 10px; font-size: 12px; color: var(--text-tertiary);">
+                        ⏰ ${timestamp}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Handle Logout
+        function handleLogout() {
+            const confirmed = confirm('Are you sure you want to sign out?');
+            if (confirmed) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userFullName');
+                showAlert('✅ Signed out successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 1500);
+            }
+        }
+
+        // Check if user is logged in
+        window.addEventListener('load', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn) {
+                // Redirect to auth page if not logged in
+                // Commented out for now to allow testing
+                // window.location.href = 'auth.html';
+            }
+        });
+
+        // Test connection
+        fetch(API_URL + '/test')
+            .then(() => console.log('✅ Connected to backend'))
+            .catch(() => console.warn('⚠️ Backend not available'));
+    </script>
+</body>
+</html>

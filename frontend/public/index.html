@@ -1247,18 +1247,18 @@
             </div>
 
             <div class="settings-tabs">
-                <button class="settings-tab-btn active" onclick="switchSettingsTab('profile')">👤 Profile</button>
-                <button class="settings-tab-btn" onclick="switchSettingsTab('preferences')">🎨 Preferences</button>
-                <button class="settings-tab-btn" onclick="switchSettingsTab('privacy')">🔒 Privacy & Security</button>
-                <button class="settings-tab-btn" onclick="switchSettingsTab('data')">💾 Data & Storage</button>
-                <button class="settings-tab-btn" onclick="switchSettingsTab('about')">ℹ️ About</button>
+                <button class="settings-tab-btn active" onclick="switchSettingsTab('profile')"><span>👤</span> Profile</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('preferences')"><span>🎨</span> Preferences</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('privacy')"><span>🔒</span> Privacy</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('data')"><span>💾</span> Data</button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab('about')"><span>ℹ️</span> About</button>
             </div>
 
             <div class="settings-content">
                 <!-- Profile Tab -->
                 <div class="settings-tab" id="profile-tab">
                     <div class="settings-section">
-                        <h3>User Profile</h3>
+                        <h3><span>👤</span> User Profile</h3>
                         <div class="settings-form-group">
                             <label>Full Name</label>
                             <input type="text" id="settingsFullName" class="settings-input" placeholder="Your full name">
@@ -1287,7 +1287,7 @@
                 <!-- Preferences Tab -->
                 <div class="settings-tab hidden" id="preferences-tab">
                     <div class="settings-section">
-                        <h3>Appearance</h3>
+                        <h3><span>🎨</span> Appearance</h3>
                         <div class="settings-form-group">
                             <label>Theme</label>
                             <select id="themePreference" class="settings-input" onchange="saveSettings()">
@@ -1298,7 +1298,7 @@
                     </div>
 
                     <div class="settings-section">
-                        <h3>Features</h3>
+                        <h3><span>⚡</span> Features</h3>
                         <div class="settings-checkbox-group">
                             <input type="checkbox" id="autoSave" class="settings-checkbox">
                             <label for="autoSave">Auto-save work</label>
@@ -1317,15 +1317,15 @@
                 <!-- Privacy & Security Tab -->
                 <div class="settings-tab hidden" id="privacy-tab">
                     <div class="settings-section">
-                        <h3>Security Settings</h3>
+                        <h3><span>🔐</span> Security Settings</h3>
                         <button class="settings-button secondary">🔐 Change Password</button>
                         <button class="settings-button secondary">📱 Two-Factor Authentication</button>
                         <button class="settings-button secondary">🗺️ View Active Sessions</button>
                     </div>
 
                     <div class="settings-section">
-                        <h3>Privacy Controls</h3>
-                        <button class="settings-button secondary">👁️ View Privacy Policy</button>
+                        <h3><span>👁️</span> Privacy Controls</h3>
+                        <button class="settings-button secondary">📋 View Privacy Policy</button>
                         <button class="settings-button secondary">📋 Download Your Data</button>
                         <button class="settings-button secondary">❌ Request Data Deletion</button>
                     </div>
@@ -1334,7 +1334,7 @@
                 <!-- Data & Storage Tab -->
                 <div class="settings-tab hidden" id="data-tab">
                     <div class="settings-section">
-                        <h3>Storage & Backup</h3>
+                        <h3><span>💾</span> Storage & Backup</h3>
                         <div class="storage-info">
                             <p>📊 Local Storage Used: <strong>~500 KB</strong></p>
                             <p>📁 Files Uploaded: <strong id="storageFiles">0</strong></p>
@@ -1343,7 +1343,7 @@
                     </div>
 
                     <div class="settings-section">
-                        <h3>Danger Zone</h3>
+                        <h3><span>⚠️</span> Danger Zone</h3>
                         <button class="settings-button danger" onclick="clearAllData()">🗑️ Clear All Data</button>
                     </div>
                 </div>
@@ -1351,7 +1351,7 @@
                 <!-- About Tab -->
                 <div class="settings-tab hidden" id="about-tab">
                     <div class="settings-section">
-                        <h3>About AnalysX</h3>
+                        <h3><span>ℹ️</span> About AnalysX</h3>
                         <div class="about-info">
                             <p><strong>Version:</strong> 2.1.0</p>
                             <p><strong>Build:</strong> 2026-01-18</p>
@@ -1364,7 +1364,7 @@
                     </div>
 
                     <div class="settings-section">
-                        <h3>Support & Documentation</h3>
+                        <h3><span>🤝</span> Support & Documentation</h3>
                         <button class="settings-button secondary">📚 View Documentation</button>
                         <button class="settings-button secondary">🐛 Report a Bug</button>
                         <button class="settings-button secondary">💬 Feedback & Suggestions</button>
@@ -1422,10 +1422,11 @@
         }
 
         .settings-header h2 {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 26px;
+            font-weight: 800;
             margin: 0;
             color: var(--text-dark);
+            letter-spacing: -0.5px;
         }
 
         .settings-close-btn {
@@ -1451,7 +1452,7 @@
         }
 
         .settings-tab-btn {
-            padding: 8px 14px;
+            padding: 10px 16px;
             background: transparent;
             border: none;
             border-radius: 6px;
@@ -1462,6 +1463,14 @@
             transition: all 0.3s ease;
             white-space: nowrap;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .settings-tab-btn span {
+            font-size: 16px;
+            display: inline-flex;
         }
 
         .settings-tab-btn:hover {
@@ -1472,6 +1481,7 @@
         .settings-tab-btn.active {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .settings-content {
@@ -1519,10 +1529,13 @@
         }
 
         .settings-section h3 {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 14px;
             color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .settings-form-group {

@@ -1706,36 +1706,158 @@
         }
 
         function analyzeQuery(query) {
+            if (!currentData || currentData.length === 0) {
+                return { 'Error': 'No data loaded' };
+            }
+
             const lowerQuery = query.toLowerCase();
             const results = {};
 
-            if (lowerQuery.includes('average') || lowerQuery.includes('avg')) {
-                const numCols = currentSheetAnalysis.columns.filter(c => 
-                    c.predictedType.includes('Integer') || c.predictedType.includes('Decimal')
-                );
-                numCols.forEach(col => {
-                    const values = currentData.map(row => parseFloat(row[col.name]))
-                        .filter(v => !isNaN(v));
-                    if (values.length > 0) {
-                        const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
-                        results[`Average of ${col.name}`] = avg;
-                    }
-                });
+            // Search for specific values (Find record where name is...)
+            if (lowerQuery.includes('where') || lowerQuery.includes('find') || lowerQuery.includes('on which')) {
+                const searchResults = searchRecords(query);
+                if (searchResults.length > 0) {
+                    results['Matching Records'] = searchResults.length.toString();
+                    results['Details'] = formatSearchResults(searchResults.slice(0, 3));
+                    return results;
+                }
             }
 
-            if (lowerQuery.includes('total') || lowerQuery.includes('count')) {
+            // Average/Sum queries
+            if (lowerQuery.includes('average') || lowerQuery.includes('avg') || lowerQuery.includes('mean')) {
+                const statResults = calculateStatistics(query, 'average');
+                if (statResults) return statResults;
+            }
+
+            if (lowerQuery.includes('sum') || lowerQuery.includes('total of')) {
+                const statResults = calculateStatistics(query, 'sum');
+                if (statResults) return statResults;
+            }
+
+            if (lowerQuery.includes('max') || lowerQuery.includes('maximum') || lowerQuery.includes('highest')) {
+                const statResults = calculateStatistics(query, 'max');
+                if (statResults) return statResults;
+            }
+
+            if (lowerQuery.includes('min') || lowerQuery.includes('minimum') || lowerQuery.includes('lowest')) {
+                const statResults = calculateStatistics(query, 'min');
+                if (statResults) return statResults;
+            }
+
+            // Count queries
+            if (lowerQuery.includes('how many') || lowerQuery.includes('count')) {
                 results['Total Records'] = currentData.length.toLocaleString();
+                return results;
             }
 
-            if (lowerQuery.includes('column') || lowerQuery.includes('field')) {
+            // Column queries
+            if (lowerQuery.includes('column') || lowerQuery.includes('field') || lowerQuery.includes('what columns')) {
                 results['Columns'] = currentSheetAnalysis.columns.map(c => `${c.name} (${c.predictedType})`).join(', ');
+                results['Total Columns'] = currentSheetAnalysis.columns.length.toString();
+                return results;
             }
 
+            // Distinct values
+            if (lowerQuery.includes('distinct') || lowerQuery.includes('unique')) {
+                const distResults = findDistinctValues(query);
+                if (distResults) return distResults;
+            }
+
+            // Default response
             if (Object.keys(results).length === 0) {
-                results['Result'] = 'Dataset has ' + currentData.length + ' records with ' + currentSheetAnalysis.columns.length + ' columns.';
+                results['Dataset Info'] = `${currentData.length} records with ${currentSheetAnalysis.columns.length} columns`;
+                results['Hint'] = 'Try asking: "What is the average of [column]?" or "Find records where [column] is [value]"';
             }
 
             return results;
+        }
+
+        function searchRecords(query) {
+            const columns = Object.keys(currentData[0]);
+            const results = [];
+
+            currentData.forEach(row => {
+                for (let col of columns) {
+                    const value = (row[col] || '').toString().toLowerCase();
+                    if (query.toLowerCase().includes(value) && value.trim() !== '') {
+                        results.push(row);
+                        break;
+                    }
+                }
+            });
+
+            return results;
+        }
+
+        function formatSearchResults(records) {
+            if (records.length === 0) return 'No records found';
+            return records.map((r, i) => {
+                const values = Object.entries(r).slice(0, 2).map(([k, v]) => `${k}: ${v}`).join(', ');
+                return `${i + 1}. ${values}`;
+            }).join('\n');
+        }
+
+        function calculateStatistics(query, type) {
+            const columns = Object.keys(currentData[0]);
+            const results = {};
+
+            for (let col of columns) {
+                if (query.toLowerCase().includes(col.toLowerCase())) {
+                    const values = currentData.map(row => parseFloat(row[col]))
+                        .filter(v => !isNaN(v));
+                    
+                    if (values.length === 0) continue;
+
+                    if (type === 'average') {
+                        const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
+                        results[`Average of ${col}`] = avg;
+                    } else if (type === 'sum') {
+                        const sum = values.reduce((a, b) => a + b, 0).toFixed(2);
+                        results[`Sum of ${col}`] = sum;
+                    } else if (type === 'max') {
+                        results[`Maximum of ${col}`] = Math.max(...values).toFixed(2);
+                    } else if (type === 'min') {
+                        results[`Minimum of ${col}`] = Math.min(...values).toFixed(2);
+                    }
+                    return results;
+                }
+            }
+
+            // If no specific column mentioned, apply to all numeric columns
+            for (let col of columns) {
+                const values = currentData.map(row => parseFloat(row[col]))
+                    .filter(v => !isNaN(v));
+                
+                if (values.length === 0) continue;
+
+                if (type === 'average') {
+                    const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
+                    results[`Average of ${col}`] = avg;
+                } else if (type === 'sum') {
+                    const sum = values.reduce((a, b) => a + b, 0).toFixed(2);
+                    results[`Sum of ${col}`] = sum;
+                }
+            }
+
+            return Object.keys(results).length > 0 ? results : null;
+        }
+
+        function findDistinctValues(query) {
+            const columns = Object.keys(currentData[0]);
+            const results = {};
+
+            for (let col of columns) {
+                if (query.toLowerCase().includes(col.toLowerCase())) {
+                    const distinct = new Set(currentData.map(r => r[col]));
+                    results[`Distinct ${col}`] = distinct.size.toString();
+                    if (distinct.size <= 10) {
+                        results[`Values`] = Array.from(distinct).join(', ');
+                    }
+                    return results;
+                }
+            }
+
+            return null;
         }
 
         function displayQueryResults(results) {

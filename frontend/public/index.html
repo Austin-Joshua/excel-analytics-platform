@@ -938,88 +938,147 @@
         // File Upload
         function handleFileUpload(event) {
             const file = event.target.files[0];
-            if (file) {
+            if (!file) {
+                alert('❌ No file selected');
+                return;
+            }
+
+            try {
                 const reader = new FileReader();
+                
                 reader.onload = (e) => {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
-                    currentData = XLSX.utils.sheet_to_json(sheet);
-                    performAIAnalysis();
-                    updateDashboard();
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        
+                        if (!workbook || !workbook.SheetNames || workbook.SheetNames.length === 0) {
+                            alert('❌ No sheets found in file');
+                            return;
+                        }
+                        
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        currentData = XLSX.utils.sheet_to_json(sheet);
+                        
+                        if (!currentData || currentData.length === 0) {
+                            alert('❌ File is empty or has no data');
+                            return;
+                        }
+                        
+                        performAIAnalysis();
+                        updateDashboard();
+                        alert('✅ File uploaded and analyzed successfully!');
+                    } catch (error) {
+                        console.error('Error processing file:', error);
+                        alert('❌ Error processing file: ' + error.message);
+                    }
                 };
+                
+                reader.onerror = (error) => {
+                    console.error('FileReader error:', error);
+                    alert('❌ Error reading file');
+                };
+                
                 reader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error('Error in handleFileUpload:', error);
+                alert('❌ Error: ' + error.message);
             }
         }
 
         function uploadFile() {
-            if (currentData) {
-                alert('✅ File uploaded successfully!');
+            if (currentData && currentData.length > 0) {
+                alert('✅ File uploaded successfully!\n\nRows: ' + currentData.length + '\nColumns: ' + Object.keys(currentData[0]).length);
             } else {
-                alert('Please select a file first');
+                alert('❌ Please select and upload a valid Excel file first');
             }
         }
 
         // Update Dashboard
         function updateDashboard() {
-            if (!currentData || currentData.length === 0) return;
+            if (!currentData || currentData.length === 0) {
+                console.warn('No data to update dashboard');
+                return;
+            }
 
-            const rows = currentData.length;
-            const cols = Object.keys(currentData[0]).length;
-            let duplicates = 0;
-            let missing = 0;
+            try {
+                const rows = currentData.length;
+                const cols = Object.keys(currentData[0]).length;
+                let duplicates = 0;
+                let missing = 0;
 
-            const seenRows = new Set();
-            currentData.forEach(row => {
-                const rowStr = JSON.stringify(row);
-                if (seenRows.has(rowStr)) duplicates++;
-                seenRows.add(rowStr);
-                
-                Object.values(row).forEach(val => {
-                    if (val === null || val === undefined || val === '') missing++;
+                const seenRows = new Set();
+                currentData.forEach(row => {
+                    const rowStr = JSON.stringify(row);
+                    if (seenRows.has(rowStr)) duplicates++;
+                    seenRows.add(rowStr);
+                    
+                    Object.values(row).forEach(val => {
+                        if (val === null || val === undefined || val === '') missing++;
+                    });
                 });
-            });
 
-            const quality = Math.max(0, 100 - (duplicates + missing) / (rows * cols) * 100);
+                const totalCells = rows * cols;
+                const quality = Math.max(0, 100 - ((duplicates + missing) / totalCells) * 100);
 
-            document.getElementById('filesCount').textContent = '1';
-            document.getElementById('rowsCount').textContent = rows.toLocaleString();
-            document.getElementById('colsCount').textContent = cols;
-            document.getElementById('qualityScore').textContent = Math.round(quality) + '%';
+                const filesCountEl = document.getElementById('filesCount');
+                const rowsCountEl = document.getElementById('rowsCount');
+                const colsCountEl = document.getElementById('colsCount');
+                const qualityScoreEl = document.getElementById('qualityScore');
+
+                if (filesCountEl) filesCountEl.textContent = '1';
+                if (rowsCountEl) rowsCountEl.textContent = rows.toLocaleString();
+                if (colsCountEl) colsCountEl.textContent = cols;
+                if (qualityScoreEl) qualityScoreEl.textContent = Math.round(quality) + '%';
+
+                console.log('Dashboard updated:', { rows, cols, quality });
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+            }
         }
 
         // AI Analysis
         function performAIAnalysis() {
-            if (!currentData || currentData.length === 0) return;
+            if (!currentData || currentData.length === 0) {
+                console.warn('No data for AI analysis');
+                return;
+            }
 
-            const columns = Object.keys(currentData[0]);
-            const analysis = {
-                columns: [],
-                totalRows: currentData.length,
-                totalColumns: columns.length
-            };
+            try {
+                const columns = Object.keys(currentData[0]);
+                const analysis = {
+                    columns: [],
+                    totalRows: currentData.length,
+                    totalColumns: columns.length
+                };
 
-            columns.forEach(col => {
-                const values = currentData.map(row => row[col]).filter(v => v !== null && v !== undefined && v !== '');
-                const numValues = values.filter(v => !isNaN(v) && v !== '');
-                
-                let predictedType = 'Text';
-                if (numValues.length > values.length * 0.7) {
-                    predictedType = numValues.some(v => v.toString().includes('.')) ? 'Decimal' : 'Integer';
-                } else if (col.toLowerCase().includes('date') || col.toLowerCase().includes('time')) {
-                    predictedType = 'Date';
-                }
+                columns.forEach(col => {
+                    const values = currentData.map(row => row[col]).filter(v => v !== null && v !== undefined && v !== '');
+                    const numValues = values.filter(v => !isNaN(v) && v !== '');
+                    
+                    let predictedType = 'Text';
+                    if (numValues.length > values.length * 0.7) {
+                        predictedType = numValues.some(v => v.toString().includes('.')) ? 'Decimal' : 'Integer';
+                    } else if (col.toLowerCase().includes('date') || col.toLowerCase().includes('time')) {
+                        predictedType = 'Date';
+                    } else if (col.toLowerCase().includes('id') || col.toLowerCase().includes('code')) {
+                        predictedType = 'ID';
+                    }
 
-                analysis.columns.push({
-                    name: col,
-                    predictedType: predictedType,
-                    nullCount: currentData.length - values.length
+                    analysis.columns.push({
+                        name: col,
+                        predictedType: predictedType,
+                        nullCount: currentData.length - values.length,
+                        uniqueCount: new Set(values.map(v => v.toString())).size
+                    });
                 });
-            });
 
-            currentSheetAnalysis = analysis;
-            displayAIAnalysis(analysis);
+                currentSheetAnalysis = analysis;
+                displayAIAnalysis(analysis);
+                console.log('AI Analysis completed:', analysis);
+            } catch (error) {
+                console.error('Error in performAIAnalysis:', error);
+            }
         }
 
         function displayAIAnalysis(analysis) {

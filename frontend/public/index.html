@@ -17,7 +17,6 @@
         }
 
         :root {
-            /* Light Mode Colors */
             --bg-primary: #ffffff;
             --bg-secondary: #f5f7fb;
             --bg-tertiary: #e8eff7;
@@ -37,7 +36,6 @@
         }
 
         [data-theme="dark"] {
-            /* Dark Mode Colors */
             --bg-primary: #0f172a;
             --bg-secondary: #1e293b;
             --bg-tertiary: #334155;
@@ -71,7 +69,6 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* Main Layout */
         .main-container {
             display: flex;
             flex: 1;
@@ -83,7 +80,7 @@
         .sidebar {
             width: 260px;
             background: var(--bg-primary);
-            border-right: 1px solid var(--border-color);
+            border-right: 2px solid var(--border-color);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -190,9 +187,9 @@
             display: flex;
             align-items: center;
             background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            padding: 8px 15px;
+            padding: 10px 15px;
             gap: 8px;
             flex: 0.3;
         }
@@ -249,16 +246,8 @@
             overflow-y: auto;
             padding: 35px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .content-body.full-width {
             grid-template-columns: 1fr;
-        }
-
-        .content-body.three-column {
-            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
         }
 
         /* Section Containers */
@@ -294,46 +283,16 @@
             line-height: 1;
         }
 
-        .section-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            border: 2px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            border-color: var(--accent-secondary);
-            box-shadow: 0 6px 12px var(--shadow-md);
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--accent-primary);
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--text-tertiary);
-            margin-top: 8px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
         /* Upload Area */
+        .upload-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
         .upload-area {
-            border: 2px dashed var(--border-color);
+            border: 3px dashed var(--border-color);
             border-radius: 12px;
             padding: 40px;
             text-align: center;
@@ -367,6 +326,168 @@
             display: none;
         }
 
+        /* Stats Grid */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 6px 12px var(--shadow-md);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* AI Analysis Section */
+        .ai-analysis {
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-secondary) 100%);
+            border-radius: 14px;
+            border: 2px solid var(--accent-secondary);
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .ai-analysis-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .ai-predictions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .prediction-item {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid var(--accent-secondary);
+        }
+
+        .prediction-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .prediction-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Query System */
+        .query-section {
+            background: linear-gradient(135deg, var(--info) 0%, #2563eb 100%);
+            border-radius: 14px;
+            padding: 25px;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .query-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .query-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .query-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .query-btn {
+            padding: 12px 24px;
+            background: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .query-btn:hover {
+            background: #1e3a8a;
+            transform: translateY(-2px);
+        }
+
+        .query-results {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 20px;
+            color: var(--text-primary);
+            margin-top: 15px;
+        }
+
+        .query-result-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .query-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .query-result-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .query-result-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
         /* Buttons */
         .btn {
             padding: 12px 24px;
@@ -392,196 +513,60 @@
             box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
         }
 
-        .btn-secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--border-color);
-        }
-
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 12px;
-        }
-
-        /* Feature Buttons */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .feature-btn {
-            padding: 25px 20px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .btn-block {
+            width: 100%;
             justify-content: center;
-            min-height: 140px;
+            margin-top: 15px;
         }
 
-        .feature-btn:hover {
-            background: var(--accent-light);
-            border-color: var(--accent-secondary);
-            color: var(--accent-primary);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px var(--shadow-md);
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .upload-container {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .feature-btn.active {
-            background: var(--accent-primary);
-            color: white;
-            border-color: var(--accent-primary);
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+
+            .content-body {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .upload-container {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .feature-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-            display: block;
-            line-height: 1;
+        /* Loading state */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--bg-secondary);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
-        /* Charts */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        /* Tables */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 13px;
-        }
-
-        tr:hover {
-            background: var(--bg-secondary);
-        }
-
-        /* Data Insights */
-        .insight-item {
-            padding: 15px;
-            background: var(--bg-secondary);
-            border-left: 3px solid var(--accent-secondary);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .insight-icon {
-            font-size: 20px;
-        }
-
-        .insight-text {
-            flex: 1;
-        }
-
-        .insight-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-
-        .insight-label {
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
-
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .close-btn:hover {
-            color: var(--text-primary);
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Scrollbar */
@@ -602,166 +587,12 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-tertiary);
         }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .content-body {
-                grid-template-columns: 1fr;
-            }
-
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-                flex-direction: row;
-                overflow-x: auto;
-                padding: 0;
-            }
-
-            .nav-section {
-                display: flex;
-                gap: 5px;
-                padding: 0;
-                border-right: 1px solid var(--border-color);
-            }
-
-            .nav-section-title {
-                display: none;
-            }
-
-            .nav-item {
-                padding: 15px 12px;
-                border-left: none;
-                border-bottom: 3px solid transparent;
-            }
-
-            .nav-item:hover, .nav-item.active {
-                border-left: none;
-                border-bottom-color: var(--accent-secondary);
-            }
-
-            .section {
-                padding: 20px;
-            }
-
-            .content-body {
-                padding: 15px;
-                gap: 15px;
-            }
-        }
-
-        /* Animations */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section {
-            animation: slideIn 0.3s ease;
-        }
-
-        /* Loading State */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--bg-secondary);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Status Badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .badge-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .badge-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .badge-info {
-            background: var(--info);
-            color: white;
-        }
-
-        /* Tab Navigation */
-        .tabs {
-            display: flex;
-            gap: 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 15px 20px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 14px;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .tab:hover {
-            color: var(--accent-primary);
-        }
-
-        .tab.active {
-            color: var(--accent-primary);
-            border-bottom-color: var(--accent-primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
-    <!-- Sidebar Navigation -->
+    <!-- Main Container -->
     <div class="main-container">
+        <!-- Sidebar Navigation -->
         <div class="sidebar">
             <div class="sidebar-brand">
                 <img src="icon.svg" alt="AnalysX">
@@ -773,10 +604,6 @@
                 <div class="nav-item active" onclick="switchSection('dashboard')">
                     <span class="nav-icon">📊</span>
                     <span>Dashboard</span>
-                </div>
-                <div class="nav-item" onclick="switchSection('upload')">
-                    <span class="nav-icon">📁</span>
-                    <span>Upload</span>
                 </div>
             </div>
 
@@ -809,6 +636,7 @@
             </div>
         </div>
 
+        <!-- Content Area -->
         <div class="content-area">
             <!-- Top Navbar -->
             <div class="navbar">
@@ -825,438 +653,149 @@
             </div>
 
             <!-- Content Body -->
-            <div class="content-body full-width">
-                <!-- Dashboard Section -->
-                <div id="dashboard" class="section active-view">
+            <div class="content-body">
+                <!-- Dashboard Section (Merged with Upload) -->
+                <div id="dashboard" class="section">
                     <div class="section-title">
                         <span class="section-icon">📊</span>
-                        Dashboard Overview
+                        Dashboard & Upload
                     </div>
 
-                    <div class="section-grid">
-                        <div class="stat-card">
-                            <div class="stat-value" id="filesCount">0</div>
-                            <div class="stat-label">Files Uploaded</div>
+                    <!-- Upload Area -->
+                    <div class="upload-container">
+                        <div>
+                            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                                <div class="upload-icon">📁</div>
+                                <div class="upload-text">Upload Excel File</div>
+                                <div class="upload-subtext">Drag, drop or click to upload (.xlsx, .xls, .csv)</div>
+                            </div>
+                            <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(event)">
+                            <button class="btn btn-primary btn-block" onclick="uploadFile()">
+                                <span>📤</span> Upload & Analyze
+                            </button>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="rowsCount">0</div>
-                            <div class="stat-label">Total Rows</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="colsCount">0</div>
-                            <div class="stat-label">Columns</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="qualityScore">0%</div>
-                            <div class="stat-label">Data Quality</div>
+
+                        <!-- Statistics -->
+                        <div class="stats-container">
+                            <div class="stat-card">
+                                <div class="stat-value" id="filesCount">0</div>
+                                <div class="stat-label">Files Uploaded</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="rowsCount">0</div>
+                                <div class="stat-label">Total Rows</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="colsCount">0</div>
+                                <div class="stat-label">Columns</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="qualityScore">0%</div>
+                                <div class="stat-label">Data Quality</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--border-color);">
-                        <h3 style="margin-bottom: 25px; color: var(--text-primary); font-weight: 700; font-size: 18px; letter-spacing: 0.5px;">Quick Actions</h3>
-                        <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
-                            <button class="feature-btn" onclick="switchSection('upload')" title="Upload Excel/CSV file (Ctrl+U)">
-                                <div class="feature-icon">📤</div>
-                                <div>Upload File</div>
-                            </button>
-                            <button class="feature-btn" onclick="switchSection('analytics')" title="View analytics (Ctrl+A)">
-                                <div class="feature-icon">🔬</div>
-                                <div>Analyze</div>
-                            </button>
-                            <button class="feature-btn" onclick="switchSection('charts')" title="Generate charts (Ctrl+H)">
-                                <div class="feature-icon">📉</div>
-                                <div>Visualize</div>
-                            </button>
-                            <button class="feature-btn" onclick="switchSection('insights')" title="Get AI insights (Ctrl+I)">
-                                <div class="feature-icon">✨</div>
-                                <div>Insights</div>
-                            </button>
+                    <!-- AI Analysis & Predictions -->
+                    <div class="ai-analysis">
+                        <div class="ai-analysis-title">
+                            🤖 AI Sheet Analysis & Predictions
+                        </div>
+                        <div class="ai-predictions" id="aiPredictions">
+                            <div class="prediction-item">
+                                <div class="prediction-label">Sheet Status</div>
+                                <div class="prediction-value">No data uploaded yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Query System -->
+                    <div class="query-section">
+                        <div class="query-title">
+                            🧠 Ask Your Excel Sheet Anything
+                        </div>
+                        <div class="query-input-group">
+                            <input type="text" class="query-input" id="queryInput" 
+                                   placeholder="e.g., What's the average sales? Show me top products. Find outliers in price..."
+                                   onkeypress="handleQueryKeyPress(event)">
+                            <button class="query-btn" onclick="submitQuery()">Ask</button>
+                        </div>
+                        <div class="query-results" id="queryResults" style="display: none;">
+                            <div id="queryContent"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Upload Section -->
-                <div id="upload" class="section" style="display: none;">
-                    <div class="section-title">
-                        <span class="section-icon">📁</span>
-                        Upload Excel File
-                    </div>
-
-                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                        <div class="upload-icon">📊</div>
-                        <div class="upload-text">Click to upload or drag and drop</div>
-                        <div class="upload-subtext">Excel, CSV files (.xlsx, .xls, .csv)</div>
-                    </div>
-
-                    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(event)">
-
-                    <button class="btn btn-primary" onclick="uploadFile()" style="width: 100%;">
-                        <span>📤</span> Upload & Analyze
-                    </button>
-
-                    <div id="uploadStatus" style="margin-top: 20px;"></div>
-                </div>
-
-                <!-- Analytics Section -->
+                <!-- Analytics Section (placeholder for now) -->
                 <div id="analytics" class="section" style="display: none;">
                     <div class="section-title">
-                        <span class="section-icon">🔬</span>
-                        Data Analysis
+                        <span class="section-icon">🔍</span>
+                        Analytics
                     </div>
-
-                    <div class="tabs">
-                        <button class="tab active" onclick="switchTab(event, 'analysis-overview')">Overview</button>
-                        <button class="tab" onclick="switchTab(event, 'analysis-stats')">Statistics</button>
-                        <button class="tab" onclick="switchTab(event, 'analysis-quality')">Data Quality</button>
-                        <button class="tab" onclick="switchTab(event, 'analysis-relationships')">Relationships</button>
-                    </div>
-
-                    <div id="analysis-overview" class="tab-content active">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                            <div class="insight-item">
-                                <div class="insight-icon">📊</div>
-                                <div class="insight-text">
-                                    <div class="insight-value" id="analysisRows">0</div>
-                                    <div class="insight-label">Total Rows</div>
-                                </div>
-                            </div>
-                            <div class="insight-item">
-                                <div class="insight-icon">📋</div>
-                                <div class="insight-text">
-                                    <div class="insight-value" id="analysisCols">0</div>
-                                    <div class="insight-label">Columns</div>
-                                </div>
-                            </div>
-                            <div class="insight-item">
-                                <div class="insight-icon">📌</div>
-                                <div class="insight-text">
-                                    <div class="insight-value" id="analysisDuplicates">0</div>
-                                    <div class="insight-label">Duplicates</div>
-                                </div>
-                            </div>
-                            <div class="insight-item">
-                                <div class="insight-icon">❌</div>
-                                <div class="insight-text">
-                                    <div class="insight-value" id="analysisMissing">0</div>
-                                    <div class="insight-label">Missing Values</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="analysis-stats" class="tab-content" style="display: none;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Column Name</th>
-                                    <th>Type</th>
-                                    <th>Min</th>
-                                    <th>Max</th>
-                                    <th>Mean</th>
-                                    <th>Null Count</th>
-                                </tr>
-                            </thead>
-                            <tbody id="statsTableBody">
-                                <tr><td colspan="6" style="text-align: center; color: var(--text-tertiary);">No data loaded</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div id="analysis-quality" class="tab-content" style="display: none;">
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <div class="insight-item">
-                                <div class="insight-icon">✅</div>
-                                <div class="insight-text">
-                                    <div class="insight-value" id="qualityOverall">0%</div>
-                                    <div class="insight-label">Overall Data Quality</div>
-                                </div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="qualityChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="analysis-relationships" class="tab-content" style="display: none;">
-                        <div id="relationshipsContent">
-                            <p style="color: var(--text-tertiary);">Upload data to analyze column relationships</p>
-                        </div>
-                    </div>
+                    <p>Analytics content coming soon...</p>
                 </div>
 
-                <!-- Charts Section -->
+                <!-- Charts Section (placeholder) -->
                 <div id="charts" class="section" style="display: none;">
                     <div class="section-title">
                         <span class="section-icon">📈</span>
-                        Data Visualization
+                        Charts
                     </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; margin-bottom: 20px;">
-                        <button class="feature-btn" onclick="generateChart('line')">
-                            <div class="feature-icon">📈</div>
-                            <div>Line</div>
-                        </button>
-                        <button class="feature-btn" onclick="generateChart('bar')">
-                            <div class="feature-icon">📊</div>
-                            <div>Bar</div>
-                        </button>
-                        <button class="feature-btn" onclick="generateChart('pie')">
-                            <div class="feature-icon">🥧</div>
-                            <div>Pie</div>
-                        </button>
-                        <button class="feature-btn" onclick="generateChart('scatter')">
-                            <div class="feature-icon">🔹</div>
-                            <div>Scatter</div>
-                        </button>
-                        <button class="feature-btn" onclick="generateChart('area')">
-                            <div class="feature-icon">📉</div>
-                            <div>Area</div>
-                        </button>
-                    </div>
-
-                    <div class="charts-grid">
-                        <div class="chart-container">
-                            <canvas id="chart1"></canvas>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart2"></canvas>
-                        </div>
-                    </div>
+                    <p>Charts content coming soon...</p>
                 </div>
 
-                <!-- Insights Section -->
+                <!-- Insights Section (placeholder) -->
                 <div id="insights" class="section" style="display: none;">
                     <div class="section-title">
                         <span class="section-icon">💡</span>
-                        AI-Powered Insights
+                        Insights
                     </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 15px;">
-                        <div class="insight-item">
-                            <div class="insight-icon">🎯</div>
-                            <div class="insight-text">
-                                <div class="insight-value">Anomaly Detection</div>
-                                <div class="insight-label">Identify unusual patterns and outliers</div>
-                            </div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">📊</div>
-                            <div class="insight-text">
-                                <div class="insight-value">Trend Analysis</div>
-                                <div class="insight-label">Predict future trends based on historical data</div>
-                            </div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">🔗</div>
-                            <div class="insight-text">
-                                <div class="insight-value">Correlation Analysis</div>
-                                <div class="insight-label">Find relationships between columns</div>
-                            </div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">🧮</div>
-                            <div class="insight-text">
-                                <div class="insight-value">Regression Analysis</div>
-                                <div class="insight-label">Predict values based on patterns</div>
-                            </div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">🎨</div>
-                            <div class="insight-text">
-                                <div class="insight-value">Clustering</div>
-                                <div class="insight-label">Group similar data points together</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">
-                        <span>🚀</span> Run AI Analysis
-                    </button>
+                    <p>Insights content coming soon...</p>
                 </div>
 
-                <!-- Data Tools Section -->
+                <!-- Data Tools Section (placeholder) -->
                 <div id="datatools" class="section" style="display: none;">
                     <div class="section-title">
                         <span class="section-icon">🔧</span>
-                        Data Management Tools
+                        Data Tools
                     </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                        <button class="feature-btn" style="height: 120px; padding: 20px;">
-                            <div class="feature-icon">📛</div>
-                            <div>Column Prediction</div>
-                            <div style="font-size: 11px; margin-top: 5px; color: var(--text-tertiary);">Predict column types</div>
-                        </button>
-                        <button class="feature-btn" style="height: 120px; padding: 20px;">
-                            <div class="feature-icon">🔄</div>
-                            <div>Remove Duplicates</div>
-                            <div style="font-size: 11px; margin-top: 5px; color: var(--text-tertiary);">Clean duplicate rows</div>
-                        </button>
-                        <button class="feature-btn" style="height: 120px; padding: 20px;">
-                            <div class="feature-icon">🔍</div>
-                            <div>Find by Data</div>
-                            <div style="font-size: 11px; margin-top: 5px; color: var(--text-tertiary);">Search and filter data</div>
-                        </button>
-                        <button class="feature-btn" style="height: 120px; padding: 20px;">
-                            <div class="feature-icon">🧹</div>
-                            <div>Data Cleaning</div>
-                            <div style="font-size: 11px; margin-top: 5px; color: var(--text-tertiary);">Remove blanks & normalize</div>
-                        </button>
-                        <button class="feature-btn" style="height: 120px; padding: 20px;">
-                            <div class="feature-icon">📊</div>
-                            <div>Data Transform</div>
-                            <div style="font-size: 11px; margin-top: 5px; color: var(--text-tertiary);">Convert & reshape data</div>
-                        </button>
-                        <button class="feature-btn" style="height: 120px; padding: 20px;">
-                            <div class="feature-icon">⚙️</div>
-                            <div>Advanced Options</div>
-                            <div style="font-size: 11px; margin-top: 5px; color: var(--text-tertiary);">Custom operations</div>
-                        </button>
-                    </div>
+                    <p>Data Tools content coming soon...</p>
                 </div>
 
-                <!-- Features Section -->
+                <!-- Features Section (placeholder) -->
                 <div id="features" class="section" style="display: none;">
                     <div class="section-title">
                         <span class="section-icon">⚡</span>
-                        Available Features
+                        Features
                     </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                        <div class="insight-item" style="flex-direction: column; gap: 8px;">
-                            <div style="font-weight: 600; color: var(--accent-primary);">🤖 AI-Powered Analysis</div>
-                            <div style="font-size: 12px; color: var(--text-tertiary);">Advanced machine learning algorithms for data analysis</div>
-                        </div>
-                        <div class="insight-item" style="flex-direction: column; gap: 8px;">
-                            <div style="font-weight: 600; color: var(--accent-primary);">📊 Data Visualization</div>
-                            <div style="font-size: 12px; color: var(--text-tertiary);">Multiple chart types for better insights</div>
-                        </div>
-                        <div class="insight-item" style="flex-direction: column; gap: 8px;">
-                            <div style="font-weight: 600; color: var(--accent-primary);">🔄 Data Transformation</div>
-                            <div style="font-size: 12px; color: var(--text-tertiary);">Clean, normalize, and transform your data</div>
-                        </div>
-                        <div class="insight-item" style="flex-direction: column; gap: 8px;">
-                            <div style="font-weight: 600; color: var(--accent-primary);">💾 Export Options</div>
-                            <div style="font-size: 12px; color: var(--text-tertiary);">Export results in multiple formats</div>
-                        </div>
-                        <div class="insight-item" style="flex-direction: column; gap: 8px;">
-                            <div style="font-weight: 600; color: var(--accent-primary);">🔐 Secure Processing</div>
-                            <div style="font-size: 12px; color: var(--text-tertiary);">Your data is processed securely</div>
-                        </div>
-                        <div class="insight-item" style="flex-direction: column; gap: 8px;">
-                            <div style="font-weight: 600; color: var(--accent-primary);">⚡ Fast Performance</div>
-                            <div style="font-size: 12px; color: var(--text-tertiary);">Lightning-fast data processing</div>
-                        </div>
-                    </div>
+                    <p>Features content coming soon...</p>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">⚙️ Settings</h2>
-                <button class="close-btn" onclick="closeSettings()">✕</button>
-            </div>
-
-            <div class="tabs" style="margin-bottom: 20px;">
-                <button class="tab active" onclick="switchTab(event, 'settings-user')">User Profile</button>
-                <button class="tab" onclick="switchTab(event, 'settings-theme')">Appearance</button>
-                <button class="tab" onclick="switchTab(event, 'settings-privacy')">Privacy</button>
-            </div>
-
-            <div id="settings-user" class="tab-content active">
-                <form onsubmit="saveSettings(event)">
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Full Name</label>
-                        <input type="text" id="userName" placeholder="Enter your name" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);">
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email</label>
-                        <input type="email" id="userEmail" placeholder="Enter your email" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);">
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Organization</label>
-                        <input type="text" id="userOrg" placeholder="Your organization" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); color: var(--text-primary);">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Save Profile</button>
-                </form>
-            </div>
-
-            <div id="settings-theme" class="tab-content" style="display: none;">
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 10px; font-weight: 600;">Theme</label>
-                    <div style="display: flex; gap: 10px;">
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <input type="radio" name="theme" value="light" onchange="setTheme('light')"> Light Mode
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <input type="radio" name="theme" value="dark" onchange="setTheme('dark')"> Dark Mode
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <input type="radio" name="theme" value="auto" onchange="setTheme('auto')"> Auto
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div id="settings-privacy" class="tab-content" style="display: none;">
-                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer;">
-                    <input type="checkbox" id="analyticsConsent"> Allow usage analytics
-                </label>
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" id="feedbackConsent"> Help improve AnalysX
-                </label>
             </div>
         </div>
     </div>
 
     <script>
         let currentData = null;
-        let currentChart1 = null;
-        let currentChart2 = null;
+        let currentSheetAnalysis = null;
 
-        // Initialize on page load
         window.addEventListener('load', () => {
             loadTheme();
-            loadUserSettings();
         });
 
         // Section switching
         function switchSection(sectionId) {
-            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.style.display = 'none';
             });
+            document.getElementById(sectionId).style.display = 'flex';
 
-            // Show selected section
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.style.display = 'flex';
-            }
-
-            // Update nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             event.target.closest('.nav-item')?.classList.add('active');
         }
 
-        // Tab switching
-        function switchTab(event, tabId) {
-            const tabContents = event.target.parentElement.nextElementSibling.parentElement.querySelectorAll('.tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            document.getElementById(tabId).classList.add('active');
-
-            const tabs = event.target.parentElement.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
-        // File upload
+        // File upload handling
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -1267,6 +806,7 @@
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
                     currentData = XLSX.utils.sheet_to_json(sheet);
+                    performAIAnalysis();
                     updateDashboard();
                 };
                 reader.readAsArrayBuffer(file);
@@ -1275,13 +815,13 @@
 
         function uploadFile() {
             if (currentData) {
-                updateDashboard();
-                alert('File uploaded successfully!');
-                switchSection('analytics');
+                alert('✅ File uploaded and analyzed successfully!');
+            } else {
+                alert('Please select a file first');
             }
         }
 
-        // Dashboard update
+        // Update dashboard with statistics
         function updateDashboard() {
             if (!currentData || currentData.length === 0) return;
 
@@ -1290,8 +830,6 @@
             let duplicates = 0;
             let missing = 0;
 
-            // Calculate statistics
-            const dataStr = JSON.stringify(currentData);
             const seenRows = new Set();
             currentData.forEach(row => {
                 const rowStr = JSON.stringify(row);
@@ -1309,104 +847,186 @@
             document.getElementById('rowsCount').textContent = rows.toLocaleString();
             document.getElementById('colsCount').textContent = cols;
             document.getElementById('qualityScore').textContent = Math.round(quality) + '%';
-
-            document.getElementById('analysisRows').textContent = rows.toLocaleString();
-            document.getElementById('analysisCols').textContent = cols;
-            document.getElementById('analysisDuplicates').textContent = duplicates;
-            document.getElementById('analysisMissing').textContent = missing;
-            document.getElementById('qualityOverall').textContent = Math.round(quality) + '%';
-
-            // Update statistics table
-            const statsBody = document.getElementById('statsTableBody');
-            statsBody.innerHTML = '';
-            Object.keys(currentData[0]).forEach(col => {
-                const values = currentData.map(row => row[col]).filter(v => v !== null && v !== undefined && v !== '');
-                const numValues = values.filter(v => !isNaN(v) && v !== '');
-                const minVal = numValues.length > 0 ? Math.min(...numValues) : '-';
-                const maxVal = numValues.length > 0 ? Math.max(...numValues) : '-';
-                const avgVal = numValues.length > 0 ? (numValues.reduce((a, b) => a + parseFloat(b), 0) / numValues.length).toFixed(2) : '-';
-                const nullCount = currentData.length - values.length;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${col}</td>
-                    <td>${numValues.length > 0 ? 'Numeric' : 'Text'}</td>
-                    <td>${minVal}</td>
-                    <td>${maxVal}</td>
-                    <td>${avgVal}</td>
-                    <td>${nullCount}</td>
-                `;
-                statsBody.appendChild(row);
-            });
         }
 
-        // Chart generation
-        function generateChart(type) {
-            if (!currentData || currentData.length === 0) {
-                alert('Please upload data first');
+        // AI Analysis - Predict column names and types
+        function performAIAnalysis() {
+            if (!currentData || currentData.length === 0) return;
+
+            const columns = Object.keys(currentData[0]);
+            const analysis = {
+                columns: [],
+                totalRows: currentData.length,
+                totalColumns: columns.length,
+                dataQuality: 'Good'
+            };
+
+            columns.forEach(col => {
+                const values = currentData.map(row => row[col]).filter(v => v !== null && v !== undefined && v !== '');
+                const numValues = values.filter(v => !isNaN(v) && v !== '');
+                
+                // Predict column type
+                let predictedType = 'Text';
+                let confidence = 'Medium';
+                
+                if (numValues.length > values.length * 0.7) {
+                    predictedType = numValues.some(v => v.toString().includes('.')) ? 'Decimal' : 'Integer';
+                    confidence = 'High';
+                } else if (col.toLowerCase().includes('date') || col.toLowerCase().includes('time')) {
+                    predictedType = 'Date';
+                    confidence = 'High';
+                } else if (col.toLowerCase().includes('price') || col.toLowerCase().includes('amount')) {
+                    predictedType = 'Currency';
+                    confidence = 'High';
+                }
+
+                analysis.columns.push({
+                    name: col,
+                    predictedType: predictedType,
+                    confidence: confidence,
+                    nullCount: currentData.length - values.length,
+                    sampleValue: values[0] || 'N/A'
+                });
+            });
+
+            currentSheetAnalysis = analysis;
+            displayAIAnalysis(analysis);
+        }
+
+        // Display AI analysis predictions
+        function displayAIAnalysis(analysis) {
+            const html = `
+                <div class="prediction-item">
+                    <div class="prediction-label">Total Rows</div>
+                    <div class="prediction-value">${analysis.totalRows.toLocaleString()}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Total Columns</div>
+                    <div class="prediction-value">${analysis.totalColumns}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Data Quality</div>
+                    <div class="prediction-value">✅ ${analysis.dataQuality}</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-label">Predicted Columns</div>
+                    <div class="prediction-value">${analysis.columns.map(c => `<strong>${c.name}</strong> (${c.predictedType})`).join(', ')}</div>
+                </div>
+            `;
+            document.getElementById('aiPredictions').innerHTML = html;
+        }
+
+        // AI Query System
+        function handleQueryKeyPress(event) {
+            if (event.key === 'Enter') {
+                submitQuery();
+            }
+        }
+
+        function submitQuery() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                alert('Please enter a question');
                 return;
             }
 
-            const ctx1 = document.getElementById('chart1').getContext('2d');
-            const ctx2 = document.getElementById('chart2').getContext('2d');
+            if (!currentData) {
+                alert('Please upload a file first');
+                return;
+            }
 
-            const labels = currentData.map((row, idx) => `Row ${idx + 1}`).slice(0, 10);
-            const firstNumCol = Object.keys(currentData[0]).find(col => 
-                currentData.some(row => !isNaN(row[col]))
-            );
-            const data = currentData.map(row => row[firstNumCol]).slice(0, 10);
-
-            if (currentChart1) currentChart1.destroy();
-            if (currentChart2) currentChart2.destroy();
-
-            const commonOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') }
-                    }
-                },
-                scales: {
-                    y: {
-                        ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') },
-                        grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border-color') }
-                    },
-                    x: {
-                        ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') },
-                        grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border-color') }
-                    }
-                }
-            };
-
-            const chartConfig = {
-                line: {
-                    type: 'line',
-                    data: { labels, datasets: [{ label: firstNumCol, data, borderColor: '#3b82f6', tension: 0.4 }] }
-                },
-                bar: {
-                    type: 'bar',
-                    data: { labels, datasets: [{ label: firstNumCol, data, backgroundColor: '#3b82f6' }] }
-                },
-                pie: {
-                    type: 'pie',
-                    data: { labels: labels.slice(0, 5), datasets: [{ data: data.slice(0, 5), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'] }] }
-                },
-                scatter: {
-                    type: 'scatter',
-                    data: { datasets: [{ label: firstNumCol, data: data.map((v, i) => ({ x: i, y: v })), backgroundColor: '#3b82f6' }] }
-                },
-                area: {
-                    type: 'line',
-                    data: { labels, datasets: [{ label: firstNumCol, data, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.2)', borderColor: '#3b82f6' }] }
-                }
-            };
-
-            currentChart1 = new Chart(ctx1, { ...chartConfig[type], options: commonOptions });
-            currentChart2 = new Chart(ctx2, { type: 'bar', data: { labels, datasets: [{ label: 'Distribution', data, backgroundColor: '#10b981' }] }, options: commonOptions });
+            processQuery(query);
         }
 
-        // Theme management
+        function processQuery(query) {
+            const results = analyzeQuery(query);
+            displayQueryResults(results);
+        }
+
+        function analyzeQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const results = {};
+
+            // Average/Sum analysis
+            if (lowerQuery.includes('average') || lowerQuery.includes('avg')) {
+                const numCols = currentSheetAnalysis.columns.filter(c => 
+                    c.predictedType.includes('Integer') || c.predictedType.includes('Decimal') || c.predictedType.includes('Currency')
+                );
+                numCols.forEach(col => {
+                    const values = currentData.map(row => parseFloat(row[col.name]))
+                        .filter(v => !isNaN(v));
+                    if (values.length > 0) {
+                        const avg = (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2);
+                        results[`Average of ${col.name}`] = avg;
+                    }
+                });
+            }
+
+            // Max/Min analysis
+            if (lowerQuery.includes('max') || lowerQuery.includes('maximum')) {
+                const numCols = currentSheetAnalysis.columns.filter(c => 
+                    c.predictedType.includes('Integer') || c.predictedType.includes('Decimal') || c.predictedType.includes('Currency')
+                );
+                numCols.forEach(col => {
+                    const values = currentData.map(row => parseFloat(row[col.name]))
+                        .filter(v => !isNaN(v));
+                    if (values.length > 0) {
+                        const max = Math.max(...values).toFixed(2);
+                        results[`Maximum ${col.name}`] = max;
+                    }
+                });
+            }
+
+            if (lowerQuery.includes('min') || lowerQuery.includes('minimum')) {
+                const numCols = currentSheetAnalysis.columns.filter(c => 
+                    c.predictedType.includes('Integer') || c.predictedType.includes('Decimal') || c.predictedType.includes('Currency')
+                );
+                numCols.forEach(col => {
+                    const values = currentData.map(row => parseFloat(row[col.name]))
+                        .filter(v => !isNaN(v));
+                    if (values.length > 0) {
+                        const min = Math.min(...values).toFixed(2);
+                        results[`Minimum ${col.name}`] = min;
+                    }
+                });
+            }
+
+            // Count rows
+            if (lowerQuery.includes('total') || lowerQuery.includes('count') || lowerQuery.includes('how many')) {
+                results['Total Records'] = currentData.length.toLocaleString();
+            }
+
+            // Column info
+            if (lowerQuery.includes('column') || lowerQuery.includes('field')) {
+                results['Columns Found'] = currentSheetAnalysis.columns.map(c => `${c.name} (${c.predictedType})`).join(', ');
+            }
+
+            if (Object.keys(results).length === 0) {
+                results['Analysis Result'] = 'Query processed. Your dataset has ' + currentData.length + ' records with ' + currentSheetAnalysis.columns.length + ' columns.';
+            }
+
+            return results;
+        }
+
+        function displayQueryResults(results) {
+            const resultsDiv = document.getElementById('queryResults');
+            const contentDiv = document.getElementById('queryContent');
+
+            let html = '';
+            Object.entries(results).forEach(([key, value]) => {
+                html += `
+                    <div class="query-result-item">
+                        <div class="query-result-label">${key}</div>
+                        <div class="query-result-value">${value}</div>
+                    </div>
+                `;
+            });
+
+            contentDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+
+        // Theme toggle
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');
@@ -1420,322 +1040,10 @@
             document.documentElement.setAttribute('data-theme', theme);
         }
 
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-        }
-
-        // Settings management
+        // Settings
         function openSettings() {
-            document.getElementById('settingsModal').classList.add('active');
+            alert('⚙️ Settings panel coming soon...');
         }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-
-        function saveSettings(event) {
-            event.preventDefault();
-            const name = document.getElementById('userName').value;
-            const email = document.getElementById('userEmail').value;
-            const org = document.getElementById('userOrg').value;
-
-            localStorage.setItem('userName', name);
-            localStorage.setItem('userEmail', email);
-            localStorage.setItem('userOrg', org);
-
-            alert('Settings saved successfully!');
-        }
-
-        function loadUserSettings() {
-            document.getElementById('userName').value = localStorage.getItem('userName') || '';
-            document.getElementById('userEmail').value = localStorage.getItem('userEmail') || '';
-            document.getElementById('userOrg').value = localStorage.getItem('userOrg') || '';
-        }
-
-        // Close modal on outside click
-        document.addEventListener('click', (e) => {
-            const modal = document.getElementById('settingsModal');
-            if (e.target === modal) closeSettings();
-        });
-
-        // ============================================
-        // V1.5 FEATURES - Keyboard Shortcuts
-        // ============================================
-        
-        // Keyboard shortcuts
-        const shortcuts = {
-            'Ctrl+U': () => switchSection('upload'),
-            'Ctrl+A': () => switchSection('analytics'),
-            'Ctrl+H': () => switchSection('charts'),
-            'Ctrl+I': () => switchSection('insights'),
-            'Ctrl+T': () => switchSection('datatools'),
-            'Ctrl+S': () => openSettings(),
-            'Ctrl+E': () => exportData('excel'),
-            'Ctrl+L': () => setTheme('light'),
-            'Ctrl+D': () => setTheme('dark'),
-            'Ctrl+/': () => document.querySelector('.navbar-search input').focus(),
-        };
-
-        document.addEventListener('keydown', (e) => {
-            const key = `${e.ctrlKey ? 'Ctrl+' : ''}${e.key.toUpperCase()}`;
-            if (shortcuts[key]) {
-                e.preventDefault();
-                shortcuts[key]();
-            }
-        });
-
-        // ============================================
-        // V1.5 FEATURES - Export Functionality
-        // ============================================
-
-        function exportData(format) {
-            if (!currentData || currentData.length === 0) {
-                alert('Please upload data first');
-                return;
-            }
-
-            switch(format) {
-                case 'excel':
-                    exportToExcel();
-                    break;
-                case 'csv':
-                    exportToCSV();
-                    break;
-                case 'pdf':
-                    exportToPDF();
-                    break;
-                case 'json':
-                    exportToJSON();
-                    break;
-                case 'chart-png':
-                    exportChartPNG();
-                    break;
-            }
-        }
-
-        function exportToExcel() {
-            const worksheet = XLSX.utils.json_to_sheet(currentData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-            XLSX.writeFile(workbook, `analysX_export_${new Date().toISOString().split('T')[0]}.xlsx`);
-            alert('✅ Exported to Excel successfully!');
-        }
-
-        function exportToCSV() {
-            let csv = Object.keys(currentData[0]).join(',') + '\n';
-            currentData.forEach(row => {
-                csv += Object.values(row).map(v => `"${v}"`).join(',') + '\n';
-            });
-            
-            const link = document.createElement('a');
-            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-            link.download = `analysX_export_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-            alert('✅ Exported to CSV successfully!');
-        }
-
-        function exportToJSON() {
-            const json = JSON.stringify(currentData, null, 2);
-            const link = document.createElement('a');
-            link.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
-            link.download = `analysX_export_${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            alert('✅ Exported to JSON successfully!');
-        }
-
-        function exportToPDF() {
-            // Simple PDF export with summary
-            let pdf = `AnalysX Report - ${new Date().toLocaleDateString()}\n\n`;
-            pdf += `Statistics:\n`;
-            pdf += `Total Rows: ${currentData.length}\n`;
-            pdf += `Columns: ${Object.keys(currentData[0]).length}\n`;
-            pdf += `Data Quality: ${document.getElementById('qualityOverall').textContent}\n\n`;
-            pdf += `Column Statistics:\n`;
-            Object.keys(currentData[0]).forEach(col => {
-                pdf += `- ${col}\n`;
-            });
-            
-            const link = document.createElement('a');
-            link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(pdf);
-            link.download = `analysX_report_${new Date().toISOString().split('T')[0]}.txt`;
-            link.click();
-            alert('✅ Exported report successfully!');
-        }
-
-        function exportChartPNG() {
-            if (currentChart1) {
-                const link = document.createElement('a');
-                link.href = currentChart1.toBase64Image();
-                link.download = `analysX_chart_${new Date().toISOString().split('T')[0]}.png`;
-                link.click();
-                alert('✅ Chart exported as PNG!');
-            } else {
-                alert('Generate a chart first');
-            }
-        }
-
-        // ============================================
-        // V1.5 FEATURES - Advanced Analysis Types
-        // ============================================
-
-        function analyzeDistribution() {
-            if (!currentData || currentData.length === 0) return;
-            
-            const firstNumCol = Object.keys(currentData[0]).find(col => 
-                currentData.some(row => !isNaN(row[col]))
-            );
-            
-            if (!firstNumCol) return;
-
-            const values = currentData.map(row => parseFloat(row[firstNumCol]))
-                .filter(v => !isNaN(v));
-            
-            values.sort((a, b) => a - b);
-            const min = values[0];
-            const max = values[values.length - 1];
-            const q1 = values[Math.floor(values.length * 0.25)];
-            const median = values[Math.floor(values.length * 0.5)];
-            const q3 = values[Math.floor(values.length * 0.75)];
-            
-            alert(`📊 Distribution Analysis for ${firstNumCol}:\n\n` +
-                  `Min: ${min.toFixed(2)}\n` +
-                  `Q1: ${q1.toFixed(2)}\n` +
-                  `Median: ${median.toFixed(2)}\n` +
-                  `Q3: ${q3.toFixed(2)}\n` +
-                  `Max: ${max.toFixed(2)}\n` +
-                  `Range: ${(max - min).toFixed(2)}\n` +
-                  `IQR: ${(q3 - q1).toFixed(2)}`);
-        }
-
-        function analyzeVariance() {
-            if (!currentData || currentData.length === 0) return;
-            
-            const firstNumCol = Object.keys(currentData[0]).find(col => 
-                currentData.some(row => !isNaN(row[col]))
-            );
-            
-            if (!firstNumCol) return;
-
-            const values = currentData.map(row => parseFloat(row[firstNumCol]))
-                .filter(v => !isNaN(v));
-            
-            const mean = values.reduce((a, b) => a + b) / values.length;
-            const variance = values.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / values.length;
-            const stdDev = Math.sqrt(variance);
-            const cv = (stdDev / mean) * 100; // Coefficient of variation
-            
-            alert(`📈 Variance Analysis for ${firstNumCol}:\n\n` +
-                  `Mean: ${mean.toFixed(2)}\n` +
-                  `Variance: ${variance.toFixed(2)}\n` +
-                  `Std Dev: ${stdDev.toFixed(2)}\n` +
-                  `Coefficient of Variation: ${cv.toFixed(2)}%\n\n` +
-                  `${cv < 30 ? '✅ Low variability' : cv < 50 ? '⚠️ Moderate variability' : '❌ High variability'}`);
-        }
-
-        function analyzePercentiles() {
-            if (!currentData || currentData.length === 0) return;
-            
-            const firstNumCol = Object.keys(currentData[0]).find(col => 
-                currentData.some(row => !isNaN(row[col]))
-            );
-            
-            if (!firstNumCol) return;
-
-            const values = currentData.map(row => parseFloat(row[firstNumCol]))
-                .filter(v => !isNaN(v));
-            
-            values.sort((a, b) => a - b);
-            
-            const getPercentile = (p) => {
-                const idx = Math.ceil((p / 100) * values.length) - 1;
-                return values[Math.max(0, idx)];
-            };
-            
-            alert(`📊 Percentile Analysis for ${firstNumCol}:\n\n` +
-                  `10th percentile: ${getPercentile(10).toFixed(2)}\n` +
-                  `25th percentile: ${getPercentile(25).toFixed(2)}\n` +
-                  `50th percentile: ${getPercentile(50).toFixed(2)}\n` +
-                  `75th percentile: ${getPercentile(75).toFixed(2)}\n` +
-                  `90th percentile: ${getPercentile(90).toFixed(2)}\n` +
-                  `95th percentile: ${getPercentile(95).toFixed(2)}\n` +
-                  `99th percentile: ${getPercentile(99).toFixed(2)}`);
-        }
-
-        // ============================================
-        // V1.5 FEATURES - Mobile UX Improvements
-        // ============================================
-
-        // Add touch-friendly enhancements
-        document.addEventListener('DOMContentLoaded', () => {
-            // Improve touch targets on mobile
-            if (window.innerWidth < 768) {
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.style.padding = '15px 20px';
-                });
-                document.querySelectorAll('.btn').forEach(btn => {
-                    btn.style.minHeight = '44px';
-                });
-            }
-
-            // Add swipe support for section switching
-            let touchStartX = 0;
-            document.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].clientX;
-            });
-
-            document.addEventListener('touchend', (e) => {
-                const touchEndX = e.changedTouches[0].clientX;
-                const diff = touchStartX - touchEndX;
-                
-                // Swipe left - next section
-                if (diff > 50) {
-                    console.log('Swipe left detected');
-                }
-                // Swipe right - previous section
-                if (diff < -50) {
-                    console.log('Swipe right detected');
-                }
-            });
-        });
-
-        // Show export menu
-        function showExportMenu() {
-            const menu = `
-                📥 Export Options:\n
-                1. Excel (.xlsx) - Ctrl+E\n
-                2. CSV (.csv)\n
-                3. JSON (.json)\n
-                4. PDF Report\n
-                5. Chart (PNG)\n\n
-                Choose format:
-            `;
-            
-            const choice = prompt(menu);
-            if (choice) {
-                switch(choice) {
-                    case '1':
-                        exportData('excel');
-                        break;
-                    case '2':
-                        exportData('csv');
-                        break;
-                    case '3':
-                        exportData('json');
-                        break;
-                    case '4':
-                        exportData('pdf');
-                        break;
-                    case '5':
-                        exportData('chart-png');
-                        break;
-                }
-            }
-        }
-
-        // Version info
-        console.log('%cAnalysX v1.5', 'color: #1e3a8a; font-size: 16px; font-weight: bold;');
-        console.log('%cFeatures: Keyboard Shortcuts | Export | Advanced Analysis | Mobile UX', 'color: #3b82f6;');
     </script>
 </body>
 </html>

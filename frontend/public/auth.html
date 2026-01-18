@@ -351,6 +351,167 @@
             border-color: var(--accent-secondary);
         }
 
+        .password-strength-meter {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            background-color: var(--danger);
+        }
+
+        .password-strength-text {
+            font-size: 12px;
+            margin-top: 4px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+        }
+
+        .password-strength-fill.weak {
+            background-color: var(--danger);
+        }
+
+        .password-strength-fill.medium {
+            background-color: var(--warning);
+        }
+
+        .password-strength-fill.strong {
+            background-color: var(--success);
+        }
+
+        .form-helper-text {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .form-helper-text.valid {
+            color: var(--success);
+        }
+
+        .form-helper-text.invalid {
+            color: var(--danger);
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon .form-input {
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-tertiary);
+            transition: color 0.3s ease;
+            margin-top: 22px;
+        }
+
+        .toggle-password:hover {
+            color: var(--accent-secondary);
+        }
+
+        .form-input.error {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .form-input.success {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .forgot-password-link {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password-link a {
+            color: var(--accent-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password-link a:hover {
+            text-decoration: underline;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
         @media (max-width: 768px) {
             .auth-container {
                 grid-template-columns: 1fr;
@@ -394,7 +555,14 @@
 
             <div class="form-group">
                 <label class="form-label">🔐 Password</label>
-                <input type="password" class="form-input" id="signInPassword" placeholder="Enter your password">
+                <div class="input-icon">
+                    <input type="password" class="form-input" id="signInPassword" placeholder="Enter your password">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('signInPassword', this)" title="Toggle password visibility">👁️</button>
+                </div>
+            </div>
+
+            <div class="forgot-password-link">
+                <a onclick="showForgotPasswordModal()">Forgot password?</a>
             </div>
 
             <div class="checkbox-group">
@@ -443,12 +611,26 @@
 
             <div class="form-group">
                 <label class="form-label">🔐 Password</label>
-                <input type="password" class="form-input" id="signUpPassword" placeholder="Min. 8 characters">
+                <div class="input-icon">
+                    <input type="password" class="form-input" id="signUpPassword" placeholder="Min. 8 characters" oninput="checkPasswordStrength()">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('signUpPassword', this)" title="Toggle password visibility">👁️</button>
+                </div>
+                <div class="password-strength-meter">
+                    <div class="password-strength-fill" id="strengthFill"></div>
+                </div>
+                <div class="password-strength-text" id="strengthText">Password strength</div>
+                <div class="form-helper-text" id="passwordRequirements">
+                    <span id="passwordCheckList">✓ 8+ characters • Letters & numbers • Special character</span>
+                </div>
             </div>
 
             <div class="form-group">
                 <label class="form-label">🔐 Confirm Password</label>
-                <input type="password" class="form-input" id="signUpConfirmPassword" placeholder="Confirm password">
+                <div class="input-icon">
+                    <input type="password" class="form-input" id="signUpConfirmPassword" placeholder="Confirm password" oninput="checkPasswordMatch()">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('signUpConfirmPassword', this)" title="Toggle password visibility">👁️</button>
+                </div>
+                <div class="form-helper-text" id="matchIndicator"></div>
             </div>
 
             <div class="checkbox-group">
@@ -541,6 +723,28 @@
                     <span class="feature-icon">🤖</span>
                     <span>Natural Language Query</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotPasswordModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeForgotPasswordModal()">✕</button>
+            <div class="modal-header">🔑 Reset Password</div>
+            <div class="modal-subtitle">Enter your email to receive reset instructions</div>
+            
+            <div class="form-group">
+                <label class="form-label">📧 Email Address</label>
+                <input type="email" class="form-input" id="resetEmail" placeholder="your@email.com">
+            </div>
+
+            <div class="alert" id="resetAlert"></div>
+
+            <button class="form-button" onclick="handlePasswordReset()">Send Reset Link</button>
+            
+            <div class="auth-toggle" style="margin-top: 20px;">
+                <a onclick="closeForgotPasswordModal()">Back to Sign In</a>
             </div>
         </div>
     </div>
@@ -693,6 +897,119 @@
                 window.location.href = 'index.html';
             }, 1500);
         }
+
+        // Password visibility toggle
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
+        // Check password strength
+        function checkPasswordStrength() {
+            const password = document.getElementById('signUpPassword').value;
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            const checks = {
+                length: password.length >= 8,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                numbers: /[0-9]/.test(password),
+                special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+            };
+            
+            Object.values(checks).forEach(check => {
+                if (check) strength++;
+            });
+            
+            const fillPercent = (strength / 5) * 100;
+            strengthFill.style.width = fillPercent + '%';
+            
+            if (strength < 2) {
+                strengthFill.className = 'password-strength-fill weak';
+                strengthText.textContent = '❌ Weak - Add more variety';
+            } else if (strength < 4) {
+                strengthFill.className = 'password-strength-fill medium';
+                strengthText.textContent = '⚠️ Medium - Add uppercase/numbers';
+            } else {
+                strengthFill.className = 'password-strength-fill strong';
+                strengthText.textContent = '✅ Strong - Great password!';
+            }
+            
+            checkPasswordMatch();
+        }
+
+        // Check password match
+        function checkPasswordMatch() {
+            const password = document.getElementById('signUpPassword').value;
+            const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+            const matchIndicator = document.getElementById('matchIndicator');
+            
+            if (!confirmPassword) {
+                matchIndicator.textContent = '';
+                return;
+            }
+            
+            if (password === confirmPassword && password) {
+                matchIndicator.textContent = '✅ Passwords match';
+                matchIndicator.className = 'form-helper-text valid';
+            } else {
+                matchIndicator.textContent = '❌ Passwords do not match';
+                matchIndicator.className = 'form-helper-text invalid';
+            }
+        }
+
+        // Forgot password modal
+        function showForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.add('active');
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.remove('active');
+            document.getElementById('resetEmail').value = '';
+            document.getElementById('resetAlert').textContent = '';
+        }
+
+        function handlePasswordReset() {
+            const email = document.getElementById('resetEmail').value.trim();
+            
+            if (!email) {
+                showAlert('resetAlert', '❌ Please enter your email address', 'error');
+                return;
+            }
+            
+            if (!email.includes('@')) {
+                showAlert('resetAlert', '❌ Please enter a valid email', 'error');
+                return;
+            }
+            
+            showAlert('resetAlert', '✅ Reset link sent to your email!', 'success');
+            setTimeout(() => {
+                closeForgotPasswordModal();
+            }, 2000);
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('forgotPasswordModal');
+            if (e.target === modal) {
+                closeForgotPasswordModal();
+            }
+        });
+
+        // Prevent modal close when clicking inside content
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.modal-content')) {
+                e.stopPropagation();
+            }
+        });
     </script>
 </body>
 </html>

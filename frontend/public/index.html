@@ -94,10 +94,14 @@
             transition: opacity 0.3s ease;
         }
 
-        .sidebar-brand img {
+        .sidebar-icon {
+            font-size: 28px;
             width: 36px;
             height: 36px;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .sidebar-brand-text {
@@ -651,7 +655,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="sidebar-brand">
-                <img src="icon.svg" alt="AnalysX">
+                <span class="sidebar-icon">📊</span>
                 <span class="sidebar-brand-text">AnalysX</span>
             </div>
             <button class="hamburger" onclick="toggleSidebar()">☰</button>

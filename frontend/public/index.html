@@ -996,8 +996,8 @@
             }
         }
 
-        // File Upload
-        function handleFileUpload(event) {
+        // File Upload with advanced retry
+        function handleFileUpload(event, retryCount = 0) {
             const file = event.target.files[0];
             if (!file) {
                 showToast('File Upload', 'No file selected. Please choose an Excel file.', 'warning');
@@ -1006,19 +1006,22 @@
 
             // Check if XLSX library is loaded, with retry logic
             if (typeof XLSX === 'undefined') {
-                showToast('Loading...', 'Excel library is loading. Please wait...', 'info', 5000);
-                console.warn('XLSX not ready, retrying...');
+                if (retryCount === 0) {
+                    showToast('Loading...', 'Excel library is loading. Please wait...', 'info', 8000);
+                    console.warn('XLSX not ready, retrying...');
+                }
                 
-                // Retry after 500ms
-                setTimeout(() => {
-                    if (typeof XLSX !== 'undefined') {
-                        handleFileUpload(event);
-                    } else {
-                        showToast('Error', 'Excel library failed to load. Please refresh the page.', 'error');
-                        console.error('XLSX library still not available after retry');
-                    }
-                }, 500);
-                return;
+                if (retryCount < 15) {
+                    // Retry every 300ms for up to 4.5 seconds
+                    setTimeout(() => {
+                        handleFileUpload(event, retryCount + 1);
+                    }, 300);
+                    return;
+                } else {
+                    showToast('Error', 'Excel library failed to load. Please refresh the page.', 'error');
+                    console.error('XLSX library still not available after 15 retries');
+                    return;
+                }
             }
 
             // Show loading state
@@ -2054,54 +2057,102 @@
 
     <!-- External Libraries - Load at end of body -->
     <script>
-        // Fallback approach - load libraries with fallback
-        function loadScripts() {
-            // Load XLSX with fallback
-            const xlsxScript = document.createElement('script');
-            xlsxScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js';
-            xlsxScript.onerror = function() {
-                console.warn('Primary XLSX CDN failed, trying backup...');
-                xlsxScript.src = 'https://unpkg.com/xlsx/dist/xlsx.full.min.js';
-                document.head.appendChild(xlsxScript);
-            };
-            xlsxScript.onload = function() {
-                console.log('✓ XLSX library loaded successfully');
-            };
-            document.head.appendChild(xlsxScript);
+        // Advanced library loading with multiple fallbacks
+        const libraryConfig = {
+            xlsx: [
+                'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js',
+                'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'
+            ],
+            chart: [
+                'https://cdn.jsdelivr.net/npm/chart.js@4.4.0',
+                'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js',
+                'https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js'
+            ]
+        };
 
-            // Load Chart.js with fallback
-            const chartScript = document.createElement('script');
-            chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-            chartScript.onerror = function() {
-                console.warn('Primary Chart.js CDN failed, trying backup...');
-                chartScript.src = 'https://unpkg.com/chart.js';
-                document.head.appendChild(chartScript);
-            };
-            chartScript.onload = function() {
-                console.log('✓ Chart.js library loaded successfully');
-            };
-            document.head.appendChild(chartScript);
+        let librariesLoaded = { xlsx: false, chart: false };
+
+        function loadLibrary(name, urls, globalVar) {
+            return new Promise((resolve) => {
+                let currentIndex = 0;
+
+                function tryLoad() {
+                    if (currentIndex >= urls.length) {
+                        console.error(`✗ Failed to load ${name} from all sources`);
+                        resolve(false);
+                        return;
+                    }
+
+                    const script = document.createElement('script');
+                    const url = urls[currentIndex];
+                    script.src = url;
+
+                    script.onload = function() {
+                        console.log(`✓ ${name} loaded from: ${url}`);
+                        librariesLoaded[name] = true;
+                        resolve(true);
+                    };
+
+                    script.onerror = function() {
+                        console.warn(`✗ Failed to load from: ${url}`);
+                        currentIndex++;
+                        tryLoad();
+                    };
+
+                    script.crossOrigin = 'anonymous';
+                    document.head.appendChild(script);
+                }
+
+                tryLoad();
+            });
         }
 
-        // Load libraries as soon as possible
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadScripts);
-        } else {
-            loadScripts();
-        }
+        // Load all libraries in parallel
+        async function initializeLibraries() {
+            console.log('Initializing external libraries...');
+            
+            await Promise.all([
+                loadLibrary('XLSX', libraryConfig.xlsx, 'XLSX'),
+                loadLibrary('Chart.js', libraryConfig.chart, 'Chart')
+            ]);
 
-        // Wait for libraries and run checks
-        setTimeout(function checkXLSX() {
-            if (typeof XLSX !== 'undefined') {
-                console.log('✓ XLSX is available');
+            if (librariesLoaded.xlsx && librariesLoaded.chart) {
+                console.log('✓✓ All libraries loaded successfully!');
                 if (typeof checkLibraries === 'function') {
                     checkLibraries();
                 }
             } else {
-                console.warn('Waiting for XLSX...');
-                setTimeout(checkXLSX, 100);
+                console.warn('⚠️ Some libraries failed to load');
             }
-        }, 100);
+        }
+
+        // Start loading when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeLibraries);
+        } else {
+            initializeLibraries();
+        }
+
+        // Fallback check for libraries
+        let retryCount = 0;
+        const maxRetries = 50;
+        
+        function monitorLibraries() {
+            if (typeof XLSX !== 'undefined' && typeof Chart !== 'undefined') {
+                console.log('✓ Libraries verified as available');
+                return;
+            }
+
+            if (retryCount < maxRetries) {
+                retryCount++;
+                setTimeout(monitorLibraries, 200);
+            } else {
+                console.error('✗ Libraries not available after timeout');
+            }
+        }
+
+        monitorLibraries();
     </script>
 </body>
 </html>

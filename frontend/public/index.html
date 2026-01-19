@@ -1071,6 +1071,18 @@
 
         // Toast Notification System
         let currentProcessingToast = null;
+        let toastQueue = [];
+        let isShowingToast = false;
+
+        function clearAllToasts() {
+            const container = document.getElementById('toastContainer');
+            if (container) {
+                const toasts = container.querySelectorAll('.toast');
+                toasts.forEach(toast => toast.remove());
+            }
+            currentProcessingToast = null;
+            isShowingToast = false;
+        }
 
         function clearProcessingToasts() {
             const container = document.getElementById('toastContainer');
@@ -1088,10 +1100,8 @@
                 return;
             }
 
-            // Clear previous processing toasts if showing a new one
-            if (type === 'info' && title.toLowerCase().includes('processing')) {
-                clearProcessingToasts();
-            }
+            // Clear ALL previous toasts to show only one at a time
+            clearAllToasts();
 
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
@@ -1109,16 +1119,18 @@
                     <div class="toast-title">${title}</div>
                     ${message ? `<div class="toast-message">${message}</div>` : ''}
                 </div>
-                <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
+                <button class="toast-close" onclick="this.closest('.toast').remove(); isShowingToast = false;">✕</button>
                 <div class="toast-progress"></div>
             `;
 
             container.appendChild(toast);
+            isShowingToast = true;
 
             // Auto remove after duration
             setTimeout(() => {
                 if (toast.parentNode) {
                     toast.remove();
+                    isShowingToast = false;
                 }
             }, duration);
         }
